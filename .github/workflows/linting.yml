@@ -36,5 +36,5 @@ jobs:
           node-modules-${{ runner.os }}-node-${{ matrix.node-version }}
 
     - run: npm ci
+    - run: npm run lint # Updated to use your lint script
     - run: npm run build --if-present
-    - run: npm test
