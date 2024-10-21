@@ -1,1 +1,3 @@
 # ASE_2024_GROUP_B
+
+## MAIN INFO HERE!!!
