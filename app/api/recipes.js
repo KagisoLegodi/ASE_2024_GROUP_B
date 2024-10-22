@@ -9,7 +9,7 @@ import clientPromise from "../../lib/mongodb";
  * @param {Object} res - The response object used to send back the result.
  * @returns {Promise<void>} Sends a JSON response containing the fetched recipes or an error message.
  */
-export default async (_req, res) => {
+ const fetchRecipes  = async (_req, res) => {
   try {
     // Await the MongoDB client connection
     const client = await clientPromise;
@@ -28,3 +28,5 @@ export default async (_req, res) => {
     res.status(500).json({ error: 'Failed to fetch data' });
   }
 };
+
+export default fetchRecipes;
