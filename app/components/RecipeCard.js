@@ -7,8 +7,8 @@ export const RecipeCard = () => {
 
   return (
     <div>
-      <h1>Hello</h1>
-      <p>This is my recipe</p>
+      <h1>{allRecipes[0].title}</h1>
+      <p>{allRecipes[0].description}</p>
     </div>
   );
 };
