@@ -1,4 +1,5 @@
 import { fetchRecipes } from "../lib/dummyData/fetchSampleData";
+
 export default function Home() {
 
   // Usage example
@@ -8,7 +9,6 @@ console.log(allRecipes);
   return (
     <div>
       <main></main>
-      <footer></footer>
     </div>
   );
 }
