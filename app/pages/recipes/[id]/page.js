@@ -1,7 +1,7 @@
 export default function SingleRecipe() {
   return (
     <div>
-      <main></main>
+      <main>123</main>
     </div>
   );
 }
