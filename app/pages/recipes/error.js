@@ -85,7 +85,7 @@ export default function Error({ error, reset }) {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6, duration: 0.5 }}
           >
-            Don't worry, try refreshing or return to the homepage.
+            Don&apost            t worry, try refreshing or return to the homepage.
           </motion.p>
           <motion.div
             className="flex justify-center space-x-4"
