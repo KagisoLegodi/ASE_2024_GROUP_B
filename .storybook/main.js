@@ -1,8 +1,8 @@
 /** @type { import('@storybook/nextjs').StorybookConfig } */
 const config = {
   stories: [
-    "../stories/**/*.mdx",
-    "../stories/**/*.stories.@(js|jsx|mjs|ts|tsx)",
+    "../app/components/**/*.mdx", // Match all .mdx files in app/components and all subdirectories
+    "../app/components/**/*.stories.@(js|jsx|mjs|ts|tsx)", // Match all story files with the listed extensions in app/components and subdirectories
   ],
   addons: [
     "@storybook/addon-onboarding",
