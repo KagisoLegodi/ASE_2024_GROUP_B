@@ -1,7 +1,17 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-images: {
-    domains: ["img.sndimg.com"], // Add this line
+  images: {
+      remotePatterns: [
+          {
+          protocol: "https",
+          hostname: "img.sndimg.com",
+          port: "",
+          pathname: "/**",
+          },
+      ],
   },
 };
+
 export default nextConfig;
+
+
