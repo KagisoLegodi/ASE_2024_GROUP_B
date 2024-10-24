@@ -70,7 +70,7 @@ export default function RecipeCard({ recipe }) {
       
     </div>
     <Link
-    href={`/recipes/${recipe.id}`}
+    href=""
     className="bg-gray-600 p-4 rounded-lg flex justify-end hover:bg-pink-100 hover:transform hover:scale-101 transition-all duration-300 ease-in-out"
   >
     Get Cooking
