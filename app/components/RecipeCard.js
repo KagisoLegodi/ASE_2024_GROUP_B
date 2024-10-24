@@ -1,7 +1,10 @@
-import Link from "next/link";
-import Image from "next/image";
+import { fetchRecipes } from "../../lib/dummyData/fetchSampleData";
 
-export default function RecipeCard({ recipe }) {
+export const RecipeCard = () => {
+  // Usage example
+  const allRecipes = fetchRecipes();
+  console.log(allRecipes);
+
   return (
     <div>
     <div className=" bg-white shadow-soft rounded-lg overflow-hidden shadow hover:shadow-lg transition-shadow p-6">
@@ -77,4 +80,4 @@ export default function RecipeCard({ recipe }) {
   </Link>
   </div>
   );
-}
+};
