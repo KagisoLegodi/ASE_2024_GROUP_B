@@ -5,7 +5,7 @@ export const metadata = {
     icon: [
       { rel: "icon", url: "/favicon-48x48.png", sizes: "48x48" },
       { rel: "icon", url: "/favicon.svg", type: "image/svg+xml" },
-      { rel: "shortcut icon", url: "/favicon.ico" }, // Correct path
+      { rel: "shortcut icon", url: "/favicon.ico" },
     ],
     apple: "/apple-touch-icon.png",
   },
