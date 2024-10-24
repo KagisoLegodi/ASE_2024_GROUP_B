@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { MongoClient } from 'mongodb';
 
 /**
@@ -60,5 +61,14 @@ export default async function Home() {
     <main>
       <h1 className="text-2xl font-bold text-center mb-8">Recipes</h1>
     </main>
+=======
+
+export default function Home() {
+
+  return (
+    <div>
+      <main><p>123</p></main>
+    </div>
+>>>>>>> main
   );
 }
