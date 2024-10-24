@@ -1,15 +1,15 @@
-import clientPromise from "../../lib/mongodb";
+import clientPromise from "../../../lib/mongodb";
 
 /**
  * API route handler for fetching all recipes from the 'recipes' collection in MongoDB.
  *
  * @async
  * @function
- * @param {Object} _req - The request object (not used in this case).
+ * @param {Object} req - The request object.
  * @param {Object} res - The response object used to send back the result.
  * @returns {Promise<void>} Sends a JSON response containing the fetched recipes or an error message.
  */
- const fetchRecipes  = async (_req, res) => {
+export const GET = async (req, res) => {
   try {
     // Await the MongoDB client connection
     const client = await clientPromise;
@@ -28,5 +28,3 @@ import clientPromise from "../../lib/mongodb";
     res.status(500).json({ error: 'Failed to fetch data' });
   }
 };
-
-export default fetchRecipes;
