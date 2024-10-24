@@ -6,7 +6,7 @@ export default function RecipeCard({ recipe }) {
     <div>
     <div className=" bg-white shadow-soft rounded-lg overflow-hidden shadow hover:shadow-lg transition-shadow p-6">
       <Image
-        src={recipe.images}
+        src={recipe.images[0]}
         alt={recipe.title}
         className="w-full h-40 object-contain"
         width={500}
@@ -38,7 +38,7 @@ export default function RecipeCard({ recipe }) {
               </g>
             </g>
           </svg>
-          {recipe.prep}
+          {recipe.prep} mins
         </p>
 
         <p className="flex flex-col items-center fill-current text-gray-400 flex-grow text-center">
@@ -63,6 +63,7 @@ export default function RecipeCard({ recipe }) {
               </g>
             </g>
           </svg>
+          {recipe.cook} mins
         </p>
       </div>
 
