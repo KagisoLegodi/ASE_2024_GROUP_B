@@ -1,10 +1,15 @@
-import { fetchRecipes } from "../../lib/dummyData/fetchSampleData";
+import Link from "next/link";
+import Image from "next/image";
 
-export const RecipeCard = () => {
-  // Usage example
-  const allRecipes = fetchRecipes();
-  console.log(allRecipes);
 
+export default function RecipeCard({ recipe }) {
+  
+    const formatDate = (dateString) => {
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      const date = new Date(dateString);
+      return date.toLocaleDateString(undefined, options);
+    };
+  
   return (
     <div>
     <div className=" bg-white shadow-soft rounded-lg overflow-hidden shadow hover:shadow-lg transition-shadow p-6">
@@ -68,16 +73,20 @@ export const RecipeCard = () => {
           </svg>
           {recipe.cook} mins
         </p>
+
+        <p>{recipe.servings}Servings</p>
+
+        <p>{formatDate(recipe.published)}</p>
       </div>
 
       
     </div>
     <Link
-    href=""
+   href={`/recipes/${recipe._id}`}
     className="bg-gray-600 p-4 rounded-lg flex justify-end hover:bg-pink-100 hover:transform hover:scale-101 transition-all duration-300 ease-in-out"
   >
     Get Cooking
   </Link>
   </div>
   );
-};
+}
