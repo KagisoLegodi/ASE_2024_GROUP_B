@@ -7,12 +7,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "lint": "next lint"
+   
   },
   "dependencies": {
-    "@storybook/addon-mdx-gfm": "^8.3.6",
+    
     "ajv": "^8.17.1",
     "ajv-keywords": "^5.1.0",
     "autoprefixer": "^10.4.20",
@@ -20,20 +19,12 @@
     "framer-motion": "^11.11.9",
     "keyv": "^5.1.2",
     "mongodb": "^6.10.0",
-    "next": "^15.0.1",
+    "next": "^14.2.16",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@chromatic-com/storybook": "^2.0.2",
-    "@storybook/addon-essentials": "^8.3.6",
-    "@storybook/addon-interactions": "^8.3.6",
-    "@storybook/addon-links": "^8.3.6",
-    "@storybook/addon-onboarding": "^8.3.6",
-    "@storybook/blocks": "^8.3.6",
-    "@storybook/nextjs": "^8.3.6",
-    "@storybook/react": "^8.3.6",
-    "@storybook/test": "^8.3.6",
+    
     "eslint": "^8",
     "eslint-config-next": "^14.2.15",
     "eslint-plugin-storybook": "^0.10.1",
