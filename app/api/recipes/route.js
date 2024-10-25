@@ -16,7 +16,7 @@ import clientPromise from "../../../lib/mongodb";
     const db = client.db('devdb'); // Connect to the 'devdb' database
 
     // Fetch all documents from the 'recipes' collection and convert them to an array
-    const recipes = await db.collection('recipes').find({}).limit(20).toArray();
+    const recipes = await db.collection('recipes').find({}).limit(100).toArray();
 
     // Send a 200 (OK) response with the fetched recipes in JSON format
     return new Response(JSON.stringify({ recipes}), { status: 200 });
