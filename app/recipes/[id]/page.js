@@ -1,39 +1,52 @@
-
 import { fetchProductById } from "../../../lib/api";
 
 /**
- * The Home component fetches recipes and displays them in a grid layout.
- * It fetches the recipe data from an API endpoint and passes each recipe
- * to the RecipeCard component for rendering.
+ * The RecipeDetail component fetches and displays a specific recipe based on its ID.
+ * It shows the recipe's details, including prep time, cooking time, total time, and servings.
  *
  * @async
- * @function Home
- * @returns {JSX.Element} A React component that displays a grid of recipe cards.
+ * @function RecipeDetail
+ * @param {Object} props - The props object.
+ * @param {Object} props.params - The route parameters, containing the recipe ID.
+ * @returns {JSX.Element} A React component that displays recipe details.
  *
  * @example
- * // Usage of Home component
- * <Home />
+ * // Usage of RecipeDetail component
+ * <RecipeDetail params={{ id: 'recipeId' }} />
  */
-export default async function RecipeDetail({params}) {
-  const { id } = await params;
+export default async function RecipeDetail({ params }) {
+  const { id } = params;
   let recipe;
 
   try {
     // Fetch recipe data from the API
     const data = await fetchProductById(id);
-    recipe = data; // Assign the fetched recipes to the recipes variable
+    recipe = data; // Assign the fetched recipe to the recipe variable
   } catch (error) {
-    console.error("Failed to fetch recipes:", error); // Handle errors gracefully
+    console.error("Failed to fetch recipe:", error);
+    return <p>Failed to load recipe details.</p>;
   }
 
+  if (!recipe) {
+    return <p>Recipe not found.</p>;
+  }
+
+  const { prepTime, cookTime, totalTime, servings, title, description } = recipe;
+
   /**
-   * Renders the Home page layout.
-   * @returns {JSX.Element} The main content including recipe grid.
+   * Formats time in minutes to a readable string (e.g., "15 mins").
+   * @param {number} timeInMinutes - The time in minutes.
+   * @returns {string} The formatted time string.
    */
+  const formatTime = (timeInMinutes) => {
+    return `${timeInMinutes} mins`;
+  };
+
   return (
-    <main>
-      <h1 className="text-2xl font-bold text-center mb-8">Recipes</h1>
-      
+    <main className="container mx-auto p-4">
+      <h1 className="text-3xl font-bold mb-4">{title}</h1>
+      <p className="mb-4">{description}</p>
+      {/* Add other recipe details here, like ingredients, steps, or images */}
     </main>
   );
 }
