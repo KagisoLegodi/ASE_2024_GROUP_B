@@ -1,4 +1,4 @@
-import "./global.css"
+import './global.css';
 /**
  * Metadata configuration for the Next.js application.
  * This object defines various site-wide metadata, including
@@ -52,11 +52,11 @@ export const metadata = {
   openGraph: {
     title: "Arejeng Recipe App",
     description: "Discover a variety of recipes with ArejengRecipeApp",
-    url: "https://mywebsite.com", // add the correct link of the website
+    // url: "https://mywebsite.com", // add the correct link of the website
     type: "website",
     images: [
       {
-        url: "https://yourwebsite.com/og-image.jpg",
+        // url: "https://yourwebsite.com/og-image.jpg",
         width: 800,
         height: 600,
         alt: "Arejeng Recipe App",
