@@ -1,3 +1,4 @@
+import "./global.css"
 /**
  * Metadata configuration for the Next.js application.
  * This object defines various site-wide metadata, including
