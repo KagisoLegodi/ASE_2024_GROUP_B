@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Image from "next/image";
+import Carousel from "./Carousel";
 
 
 export default function RecipeCard({ recipe }) {
@@ -13,14 +13,10 @@ export default function RecipeCard({ recipe }) {
   return (
     <div>
     <div className=" bg-white shadow-soft rounded-lg overflow-hidden shadow hover:shadow-lg transition-shadow p-6">
-      <Image
-        src={recipe.images[0]}
+    <Carousel
+        images={recipe.images}
         alt={recipe.title}
-        className="w-full h-40 object-contain"
-        width={500}
-        height={500}
-        quality={75}
-        priority
+        className="w-full h-40 object-cover rounded-md"
       />
       <div className="absolute inset-0 z-10"></div>
       <h3 className="text-black font-bold mt-2 text-lg text-gradient-primary">
