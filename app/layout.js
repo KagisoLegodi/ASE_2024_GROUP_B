@@ -3,38 +3,6 @@ import './global.css';
  * Metadata configuration for the Next.js application.
  * This object defines various site-wide metadata, including
  * titles, descriptions, icons, social sharing information, and more.
- * 
- * @type {Object}
- * @property {string} title - The title of the website.
- * @property {string} description - A description of the website.
- * @property {Object} icons - Configuration for different types of icons.
- * @property {Object[]} icons.icon - Array of icon configurations.
- * @property {string} icons.icon[].rel - Relationship type of the icon (e.g., "icon", "shortcut icon").
- * @property {string} icons.icon[].url - The URL path to the icon.
- * @property {string} [icons.icon[].sizes] - The size of the icon (optional).
- * @property {string} [icons.icon[].type] - The MIME type of the icon (optional).
- * @property {string} icons.apple - Path to the Apple touch icon.
- * @property {string} manifest - Path to the web app manifest file.
- * @property {string} applicationName - The name of the web application.
- * @property {Object} openGraph - Open Graph metadata configuration.
- * @property {string} openGraph.title - The title used for Open Graph sharing.
- * @property {string} openGraph.description - The description used for Open Graph sharing.
- * @property {string} openGraph.url - The URL of the website.
- * @property {string} openGraph.type - The type of content (e.g., "website").
- * @property {Object[]} openGraph.images - Array of images used for Open Graph sharing.
- * @property {string} openGraph.images[].url - The URL of the image.
- * @property {number} openGraph.images[].width - The width of the image.
- * @property {number} openGraph.images[].height - The height of the image.
- * @property {string} openGraph.images[].alt - The alt text for the image.
- * @property {Object} twitter - Twitter metadata configuration.
- * @property {string} twitter.card - The type of Twitter card (e.g., "summary_large_image").
- * @property {string} twitter.site - The Twitter handle of the website.
- * @property {string} twitter.title - The title used for Twitter sharing.
- * @property {string} twitter.description - The description used for Twitter sharing.
- * @property {string} twitter.image - The URL of the image used for Twitter sharing.
- * @property {string} themeColor - The theme color of the application.
- * @property {string[]} keywords - Array of keywords for search engine optimization.
- * @property {string} author - The author of the website.
  */
 export const metadata = {
   title: "Next.js",
@@ -52,10 +20,12 @@ export const metadata = {
   openGraph: {
     title: "Arejeng Recipe App",
     description: "Discover a variety of recipes with ArejengRecipeApp",
-    // url: "https://mywebsite.com", // add the correct link of the website
+    // Uncomment and add the correct URL of the website if available
+    // url: "https://mywebsite.com", 
     type: "website",
     images: [
       {
+        // Uncomment and add the correct URL for the Open Graph image if available
         // url: "https://yourwebsite.com/og-image.jpg",
         width: 800,
         height: 600,
@@ -70,9 +40,16 @@ export const metadata = {
     description: "Discover a variety of recipes with ArejengRecipeApp",
     image: "https://yourwebsite.com/twitter-image.jpg",
   },
-  themeColor: "#ffffff",
   keywords: ["recipes", "cooking", "food", "ArejengRecipeApp"],
-  author: "Name of author", // Add the name of the author
+  author: "Name of author", // Add the name of the author here
+};
+
+/**
+ * Viewport configuration for the Next.js application.
+ * Moved the themeColor here as per the latest Next.js requirements.
+ */
+export const viewport = {
+  themeColor: "#ffffff",
 };
 
 /**
