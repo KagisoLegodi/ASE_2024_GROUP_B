@@ -31,7 +31,11 @@ export default async function RecipeDetail({ params }) {
     return <p>Recipe not found.</p>;
   }
 
-  const { prepTime, cookTime, totalTime, servings, title, description } = recipe;
+  // Destructure with the correct property names
+  const { prep, cook, servings, title, description } = recipe;
+
+  // Calculate total time
+  const totalTime = (prep || 0) + (cook || 0);
 
   /**
    * Formats time in minutes to a readable string (e.g., "15 mins").
@@ -46,6 +50,12 @@ export default async function RecipeDetail({ params }) {
     <main className="container mx-auto p-4">
       <h1 className="text-3xl font-bold mb-4">{title}</h1>
       <p className="mb-4">{description}</p>
+      <div className="text-lg">
+        <p>Prep: {formatTime(prep)}</p>
+        <p>Cook: {formatTime(cook)}</p>
+        <p>Total: {formatTime(totalTime)}</p>
+        <p>Serves: {servings}</p>
+      </div>
       {/* Add other recipe details here, like ingredients, steps, or images */}
     </main>
   );
