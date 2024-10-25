@@ -1,30 +1,36 @@
-import clientPromise from "@/lib/mongodb"; // MongoDB client
+import clientPromise from "../../../lib/mongodb";
 
 /**
- 
-API route handler for fetching recipes from the 'recipes' collection in MongoDB.
-Handles a GET request and returns a JSON response with the fetched recipes.*
-@async
-@function GET
-@param {Request} request - The incoming request object containing the URL with query parameters.
-@returns {Promise<Response>} - A response object containing the fetched recipes in JSON format
-or an error message if the request fails.*/
-export async function GET() {
- 
-
+ * API route handler for fetching all recipes from the 'recipes' collection in MongoDB.
+ *
+ * @async
+ * @function
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object used to send back the result.
+ * @returns {Promise<void>} Sends a JSON response containing the fetched recipes or an error message.
+ */
+export const GET = async (req) => {
   try {
-    // Connect to MongoDB
+    // Await the MongoDB client connection
     const client = await clientPromise;
-    const db = client.db("devdb"); // Connect to the 'devdb' database
+    const db = client.db('devdb'); // Connect to the 'devdb' database
 
-    // Fetch all recipes from the 'recipes' collection
-    const recipes = await db.collection("recipes").find({}).toArray();
+    const dataCollection =  db.collection('recipes')
+    // Fetch all documents from the 'recipes' collection and convert them to an array
+    const recipes = await dataCollection.find({}).limit(20).toArray();
 
-    // Return the fetched recipes in JSON format with a 200 status code
-    return new Response(JSON.stringify(recipes), { status: 200 });
+    const totalNumberOfRecipes = await dataCollection.countDocuments({})
+   
+
+    console.log("total", totalNumberOfRecipes)
+
+    // Send a 200 (OK) response with the fetched recipes in JSON format
+    return new Response(JSON.stringify({recipes, totalNumberOfRecipes} ), {status: 200});
   } catch (error) {
+    // Log the error to the console for debugging
     console.error(error);
-    // Return an error message in JSON format with a 500 status code
-    return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+
+    // Send a 500 (Internal Server Error) response with an error message
+    return new Response(JSON.stringify({ error: 'Failed to fetch data' }), {status: 500});
   }
-}0
+};
