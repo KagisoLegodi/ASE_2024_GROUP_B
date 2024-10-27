@@ -23,9 +23,20 @@ export default async function RecipeDetail({ params }) {
     // Fetch recipe data from the API
     const data = await fetchProductById(id);
     recipe = data; // Assign the fetched recipe to the recipe variable
+    // Handle Errors 
   } catch (error) {
     console.error("Failed to fetch recipe:", error);
-    return <p>Failed to load recipe details.</p>;
+    return (
+      <div className="p-4 text-center">
+        <p className="text-red-500">Error: {error.message}</p>
+        <button
+          onClick={() => window.location.reload()}
+          className="px-4 py-2 bg-teal-500 text-white rounded"
+        >
+          Retry
+        </button>
+      </div>
+    );
   }
 
   if (!recipe) {
