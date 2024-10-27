@@ -40,7 +40,11 @@ export default async function RecipeDetail({ params }) {
   }
 
   if (!recipe) {
-    return <p>Recipe not found.</p>;
+    return (
+      <div className="p-4 text-center">
+        <p>Recipe not found</p>
+      </div>
+    );
   }
 
   // Destructure with the correct property names
