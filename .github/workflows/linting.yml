@@ -9,21 +9,20 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      MONGODB_URI: ${{ secrets.MONGODB_URI }}  # Add this line
 
     strategy:
       matrix:
         node-version: [18.x, 20.x, 22.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
     - uses: actions/checkout@v4
-
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-
     - name: Cache node modules
       uses: actions/cache@v4.1.1
       with:
@@ -31,12 +30,6 @@ jobs:
         key: node-modules-${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('package-lock.json') }}
         restore-keys: |
           node-modules-${{ runner.os }}-node-${{ matrix.node-version }}
-
-    # Install dependencies with --legacy-peer-deps to avoid peer conflict issues
     - run: npm ci --legacy-peer-deps
-
-    # Linting step
     - run: npm run lint
-
-    # Build step
     - run: npm run build --if-present
