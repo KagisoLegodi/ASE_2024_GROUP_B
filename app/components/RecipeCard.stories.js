@@ -7,7 +7,7 @@ const mockRecipe = {
   prep: 15,
   cook: 30,
   images: [
-    "https://images.unsplash.com/photo-1417325384643-aac51acc9e5d?q=75&fm=jpg", // Use a valid image URL
+    "https://images.unsplash.com/photo-1481931098730-318b6f776db0?q=80&w=2790&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", // Use a valid image URL
   ],
 };
 
