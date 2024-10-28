@@ -24,6 +24,10 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
+      - name: Debug MongoDB URI
+        run: echo "MONGODB_URI is set to: $MONGODB_URI"  # Use the env variable instead of the secret directly
+        env:
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}  
       - name: Cache node modules
         uses: actions/cache@v4.1.1
         with:
