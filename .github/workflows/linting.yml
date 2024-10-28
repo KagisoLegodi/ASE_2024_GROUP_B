@@ -10,7 +10,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      MONGODB_URI: ${{ env.MONGODB_URI }}  # Add this line
+      MONGODB_URI: ${{ secrets.MONGODB_URI }}  # Add this line
 
     strategy:
       matrix:
