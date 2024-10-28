@@ -14,22 +14,27 @@ jobs:
       matrix:
         node-version: [18.x, 20.x, 22.x]
 
+    env:  # Set environment variables at the job level
+      MONGODB_URI: ${{ secrets.MONGODB_URI }}
+
     steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - name: Cache node modules
-      uses: actions/cache@v4.1.1
-      with:
-        path: node_modules
-        key: node-modules-${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('package-lock.json') }}
-        restore-keys: |
-          node-modules-${{ runner.os }}-node-${{ matrix.node-version }}
-    - run: npm ci --legacy-peer-deps
-    - run: npm run lint
-    - run: npm run build --if-present
-      env:
-        MONGODB_URI: ${{ secrets.MONGODB_URI }}  # Ensure the MongoDB URI is set here
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - name: Cache node modules
+        uses: actions/cache@v4.1.1
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            node-modules-${{ runner.os }}-node-${{ matrix.node-version }}
+      - run: npm ci --legacy-peer-deps
+      - run: npm run lint
+      - run: npm run build --if-present
+      - name: Run tests
+        run: |
+          cd backend
+          npx mocha --config .mocharc.json
