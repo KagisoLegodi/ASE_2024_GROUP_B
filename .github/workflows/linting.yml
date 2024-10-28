@@ -9,8 +9,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      MONGODB_URI: ${{ secrets.MONGODB_URI }}  # Add this line
 
     strategy:
       matrix:
@@ -33,3 +31,5 @@ jobs:
     - run: npm ci --legacy-peer-deps
     - run: npm run lint
     - run: npm run build --if-present
+      env:
+        MONGODB_URI: ${{ secrets.MONGODB_URI }}  # Ensure the MongoDB URI is set here
