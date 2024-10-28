@@ -59,7 +59,8 @@ export default async function RecipeDetail({ params }) {
     tags,
     images,
     ingredients,
-    instructions
+    instructions,
+    nutrition
   } = recipe;
 
   // Calculate total time
@@ -201,6 +202,41 @@ export default async function RecipeDetail({ params }) {
           </CardContent>
         </Card>
       </div>
+      {/* Nutritional Information */}
+    {nutrition && (
+      <Card className="mt-8">
+        <CardContent className="pt-6">
+          <h2 className="text-2xl font-semibold mb-4">Nutritional Information</h2>
+          <div className="grid grid-cols-2 gap-4 text-gray-700">
+            {nutrition.calories && (
+              <div>
+                <p className="text-sm">Calories</p>
+                <p className="font-medium">{nutrition.calories} kcal</p>
+              </div>
+            )}
+            {nutrition.fats && (
+              <div>
+                <p className="text-sm">Fats</p>
+                <p className="font-medium">{nutrition.fats} g</p>
+              </div>
+            )}
+            {nutrition.carbohydrates && (
+              <div>
+                <p className="text-sm">Carbohydrates</p>
+                <p className="font-medium">{nutrition.carbohydrates} g</p>
+              </div>
+            )}
+            {nutrition.proteins && (
+              <div>
+                <p className="text-sm">Proteins</p>
+                <p className="font-medium">{nutrition.proteins} g</p>
+              </div>
+            )}
+            {/* Additional nutrition data fields if available */}
+          </div>
+        </CardContent>
+      </Card>
+    )}
     </main>
   );
 }
