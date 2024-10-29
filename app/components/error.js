@@ -1,18 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
-/**
- * @typedef {Object} SpinningGearProps
- * @property {string} [className] - Additional CSS classes for the SVG.
- */
-
-/**
- * Renders a spinning gear SVG animation.
- * @function
- * @returns {JSX.Element} The SpinningGear component.
- */
+// Component for the spinning gear animation
 const SpinningGear = () => (
   <motion.svg
     xmlns="http://www.w3.org/2000/svg"
@@ -32,22 +23,8 @@ const SpinningGear = () => (
   </motion.svg>
 );
 
-/**
- * @typedef {Object} ErrorProps
- * @property {Error} error - The error object.
- * @property {Function} reset - Function to reset the error state.
- */
-
-/**
- * Renders an error page with animation and a reset button.
- * @function
- * @param {ErrorProps} props - The component props.
- * @returns {JSX.Element} The Error component.
- */
+// Component for handling and displaying errors
 export default function Error({ error, reset }) {
-  /**
-   * Logs the error to the console when the component mounts or the error changes.
-   */
   useEffect(() => {
     console.error(error);
   }, [error]);
@@ -77,7 +54,7 @@ export default function Error({ error, reset }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.5 }}
           >
-            Something went wrong!
+            Something went wrong while retrieving recipes!
           </motion.p>
           <motion.p
             className="mt-4 mb-8 text-teal-700"
@@ -85,7 +62,7 @@ export default function Error({ error, reset }) {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6, duration: 0.5 }}
           >
-            Don&apost            t worry, try refreshing or return to the homepage.
+            Don’t worry, try refreshing or return to the homepage.
           </motion.p>
           <motion.div
             className="flex justify-center space-x-4"
@@ -105,5 +82,47 @@ export default function Error({ error, reset }) {
         </div>
       </div>
     </section>
+  );
+}
+
+// New component to fetch recipe data
+export function RecipeFetcher() {
+  const [recipes, setRecipes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchRecipes = async () => {
+      try {
+        const response = await fetch("API_URL_HERE"); // Replace with your API URL
+        if (!response.ok) {
+          throw new Error("Failed to fetch recipes");
+        }
+        const data = await response.json();
+        setRecipes(data);
+      } catch (err) {
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRecipes();
+  }, []);
+
+  if (loading) {
+    return <SpinningGear />;
+  }
+
+  if (error) {
+    return <Error error={error} reset={() => setError(null)} />;
+  }
+
+  return (
+    <div>
+      {recipes.map(recipe => (
+        <div key={recipe.id}>{recipe.name}</div> // Customize as per your recipe structure
+      ))}
+    </div>
   );
 }
