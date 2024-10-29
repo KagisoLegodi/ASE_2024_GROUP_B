@@ -1,74 +1,235 @@
 import { fetchProductById } from "../../../lib/api";
+import Image from "next/image";
+import { Clock, Users } from "lucide-react";
 
+/**
+ * The RecipeDetail component fetches and displays a specific recipe based on its ID.
+ * It shows the recipe's details, including prep time, cooking time, total time, servings, tags, and images.
+ *
+ * @async
+ * @function RecipeDetail
+ * @param {Object} props - The props object.
+ * @param {Object} props.params - The route parameters, containing the recipe ID.
+ * @returns {JSX.Element} A React component that displays recipe details.
+ *
+ * @example
+ * // Usage of RecipeDetail component
+ * <RecipeDetail params={{ id: 'recipeId' }} />
+ */
 export default async function RecipeDetail({ params }) {
   const { id } = params;
   let recipe;
 
   // Fetch recipe data
   try {
-    recipe = await fetchProductById(id);
+    // Fetch recipe data from the API
+    const data = await fetchProductById(id);
+    recipe = data; // Assign the fetched recipe to the recipe variable
+    // Handle Errors
   } catch (error) {
     console.error("Failed to fetch recipe:", error);
+    return (
+      <div className="p-4 text-center">
+        <p className="text-red-500">Error: {error.message}</p>
+        <button
+          onClick={() => window.location.reload()}
+          className="px-4 py-2 bg-teal-500 text-white rounded"
+        >
+          Retry
+        </button>
+      </div>
+    );
   }
 
-  const handleBack = () => {
-    // Define navigation logic
+  if (!recipe) {
+    return (
+      <div className="p-4 text-center">
+        <p>Recipe not found</p>
+      </div>
+    );
+  }
+
+  // Destructure with the correct property names
+  const {
+    prep,
+    cook,
+    servings,
+    title,
+    description,
+    tags,
+    images,
+    ingredients,
+    instructions,
+    nutrition
+  } = recipe;
+
+  // Calculate total time
+  const totalTime = (prep || 0) + (cook || 0);
+
+  /**
+   * Formats time in minutes to a readable string (e.g., "15 mins").
+   * @param {number} timeInMinutes - The time in minutes.
+   * @returns {string} The formatted time string.
+   */
+  const formatTime = (timeInMinutes) => {
+    return `${timeInMinutes} mins`;
   };
 
   return (
-    <main className="max-w-4xl mx-auto p-4">
-      
-      <h1 className="text-3xl font-bold mb-4">{recipe.title}</h1>
-      <p className="text-xl text-gray-700 mb-4">Category: {recipe.category}</p>
-      <p className="text-lg text-gray-600 mb-4">{recipe.description}</p>
-      <p className="text-md text-gray-500 mb-4">Published: {new Date(recipe.published).toDateString()}</p>
-      <p className="text-md text-gray-500 mb-4">Servings: {recipe.servings}</p>
+    <main className="container mx-auto p-4 max-w-4xl">
+      {/* Recipe Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold mb-2">{title}</h1>
 
-      <div className="flex flex-col md:flex-row mb-8">
-        <div className="bg-gray-200 p-4 rounded-xl">
-          <img
-            src={recipe.images[0]}
-            alt={recipe.title}
-            className="w-full h-[400px] object-contain mx-auto rounded"
-          />
-        </div>
-        {recipe.images.length > 1 && (
-          <div className="mt-4 flex flex-wrap justify-center gap-4">
-            {recipe.images.map((img, index) => (
-              <img
-                key={index}
-                src={img}
-                alt={`Thumbnail ${index + 1}`}
-                className="w-[90px] h-[60px] object-contain rounded"
-              />
-            ))}
+        {/* Tags */}
+        {tags && tags.length > 0 && (
+          <div className="mb-4">
+            <div className="flex flex-wrap gap-2">
+              {tags.map((tag, index) => (
+                <span
+                  key={index}
+                  className="bg-gray-200 text-gray-800 px-2 py-1 rounded-full text-sm"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
           </div>
         )}
+
+        <p className="text-gray-700 mb-4">{description}</p>
+
+        {/* Recipe Overview */}
+        <div className="flex flex-wrap gap-6 mb-6">
+          <div className="flex items-center gap-2">
+            <Clock className="w-5 h-5 text-gray-600" />
+            <div>
+              <p className="text-sm text-gray-600">Prep Time</p>
+              <p className="font-medium">{formatTime(prep)}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Clock className="w-5 h-5 text-gray-600" />
+            <div>
+              <p className="text-sm text-gray-600">Cook Time</p>
+              <p className="font-medium">{formatTime(cook)}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Clock className="w-5 h-5 text-gray-600" />
+            <div>
+              <p className="text-sm text-gray-600">Total Time</p>
+              <p className="font-medium">{formatTime(totalTime)}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Users className="w-5 h-5 text-gray-600" />
+            <div>
+              <p className="text-sm text-gray-600">Servings</p>
+              <p className="font-medium">{servings}</p>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div className="mb-4">
-        <h3 className="text-lg font-semibold">Tags:</h3>
-        <ul className="list-disc pl-5">
-          {recipe.tags.map((tag, index) => (
-            <li key={index}>{tag}</li>
-          ))}
-        </ul>
-      </div>
+      {/* Recipe Images */}
+      {images && images.length > 0 && (
+        <div className="mb-8">
+          <Image
+            src={images[0]}
+            alt={title}
+            width={800}
+            height={400}
+            className="w-full h-[400px] object-cover rounded-lg mb-4"
+            priority
+          />
+          {images.length > 1 && (
+            <div className="grid grid-cols-4 gap-4">
+              {images.slice(1).map((image, index) => (
+                <Image
+                  key={index}
+                  src={image}
+                  alt={`${title} ${index + 2}`}
+                  width={200}
+                  height={200}
+                  className="w-full h-32 object-cover rounded-lg"
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
-      <div className="mb-4">
-        <h3 className="text-lg font-semibold">Instructions:</h3>
-        <ul className="list-decimal pl-5">
-          {recipe.instructions.map((step, index) => (
-            <li key={index} className="mb-2">{step}</li>
-          ))}
-        </ul>
+      {/* Recipe Content */}
+      <div className="grid md:grid-cols-2 gap-8">
+        {/* Ingredients Section */}
+        <div>
+          <h2 className="text-2xl font-semibold mb-4">Ingredients</h2>
+          <ul className="space-y-2">
+            {ingredients?.map((ingredient, index) => (
+              <li key={index} className="flex items-start gap-2">
+                <span className="mt-1.5 w-2 h-2 rounded-full bg-teal-500 flex-shrink-0" />
+                <span className="text-gray-700">{ingredient}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        {/* Instructions Section */}
+        <div>
+          <div className="pt-6">
+            <h2 className="text-2xl font-semibold mb-4">Instructions</h2>
+            <ol className="space-y-4">
+            {Array.isArray(instructions) ? (
+              instructions.map((step, index) => (
+                <li key={index} className="flex gap-4">
+                  <span className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-teal-100 text-teal-700 rounded-full font-medium">
+                    {index + 1}
+                  </span>
+                  <p className="text-gray-700 pt-1">{step}</p>
+                </li>
+              ))
+            ) : (
+              <li className="text-gray-500">No instructions available.</li>
+            )}
+            </ol>
+          </div>
+        </div>
       </div>
-
-      <div className="mb-4">
-        <h3 className="text-lg font-semibold">Nutrition Facts:</h3>
-        <p>{recipe.nutrition.calories} kcal</p>
-        {/* Add other nutrition data as needed */}
-      </div>
+      {/* Nutritional Information */}
+    {nutrition && (
+      <Card className="mt-8">
+        <CardContent className="pt-6">
+          <h2 className="text-2xl font-semibold mb-4">Nutritional Information</h2>
+          <div className="grid grid-cols-2 gap-4 text-gray-700">
+            {nutrition.calories && (
+              <div>
+                <p className="text-sm">Calories</p>
+                <p className="font-medium">{nutrition.calories} kcal</p>
+              </div>
+            )}
+            {nutrition.fats && (
+              <div>
+                <p className="text-sm">Fats</p>
+                <p className="font-medium">{nutrition.fats} g</p>
+              </div>
+            )}
+            {nutrition.carbohydrates && (
+              <div>
+                <p className="text-sm">Carbohydrates</p>
+                <p className="font-medium">{nutrition.carbohydrates} g</p>
+              </div>
+            )}
+            {nutrition.proteins && (
+              <div>
+                <p className="text-sm">Proteins</p>
+                <p className="font-medium">{nutrition.proteins} g</p>
+              </div>
+            )}
+            {/* Additional nutrition data fields if available */}
+          </div>
+        </CardContent>
+      </Card>
+    )}
     </main>
   );
 }
