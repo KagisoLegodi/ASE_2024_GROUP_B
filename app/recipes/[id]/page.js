@@ -1,7 +1,6 @@
 import { fetchProductById } from "../../../lib/api";
 import Image from "next/image";
 import { Clock, Users } from "lucide-react";
-import { Card, CardContent } from "../../components/ui/card";
 
 /**
  * The RecipeDetail component fetches and displays a specific recipe based on its ID.
@@ -163,27 +162,20 @@ export default async function RecipeDetail({ params }) {
       {/* Recipe Content */}
       <div className="grid md:grid-cols-2 gap-8">
         {/* Ingredients Section */}
-        <Card>
-          <CardContent className="pt-6">
-            <h2 className="text-2xl font-semibold mb-4">Ingredients</h2>
-            <ul className="space-y-2">
-              {Array.isArray(ingredients) ? (
-                ingredients.map((ingredient, index) => (
-                  <li key={index} className="flex items-start gap-2">
-                    <span className="mt-1.5 w-2 h-2 rounded-full bg-teal-500 flex-shrink-0" />
-                    <span className="text-gray-700">{ingredient}</span>
-                  </li>
-                ))
-              ) : (
-                <li className="text-gray-500">No ingredients available.</li>
-              )}
-            </ul>
-          </CardContent>
-        </Card>
-
+        <div>
+          <h2 className="text-2xl font-semibold mb-4">Ingredients</h2>
+          <ul className="space-y-2">
+            {ingredients?.map((ingredient, index) => (
+              <li key={index} className="flex items-start gap-2">
+                <span className="mt-1.5 w-2 h-2 rounded-full bg-teal-500 flex-shrink-0" />
+                <span className="text-gray-700">{ingredient}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
         {/* Instructions Section */}
-        <Card>
-          <CardContent className="pt-6">
+        <div>
+          <div className="pt-6">
             <h2 className="text-2xl font-semibold mb-4">Instructions</h2>
             <ol className="space-y-4">
             {Array.isArray(instructions) ? (
@@ -199,8 +191,8 @@ export default async function RecipeDetail({ params }) {
               <li className="text-gray-500">No instructions available.</li>
             )}
             </ol>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
       {/* Nutritional Information */}
     {nutrition && (
