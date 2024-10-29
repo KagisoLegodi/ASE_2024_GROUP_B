@@ -1,6 +1,7 @@
 import { fetchProductById } from "../../../lib/api";
 import Image from "next/image";
 import { Clock, Users } from "lucide-react";
+import { Card, CardContent } from "../../components/ui/card";
 
 /**
  * The RecipeDetail component fetches and displays a specific recipe based on its ID.
@@ -20,6 +21,7 @@ export default async function RecipeDetail({ params }) {
   const { id } = params;
   let recipe;
 
+  // Fetch recipe data
   try {
     // Fetch recipe data from the API
     const data = await fetchProductById(id);
@@ -49,7 +51,18 @@ export default async function RecipeDetail({ params }) {
   }
 
   // Destructure with the correct property names
-  const { prep, cook, servings, title, description, tags, images } = recipe;
+  const {
+    prep,
+    cook,
+    servings,
+    title,
+    description,
+    tags,
+    images,
+    ingredients,
+    instructions,
+    nutrition
+  } = recipe;
 
   // Calculate total time
   const totalTime = (prep || 0) + (cook || 0);
@@ -162,24 +175,62 @@ export default async function RecipeDetail({ params }) {
             ))}
           </ul>
         </div>
-
         {/* Instructions Section */}
-        <div>
-          <div className="pt-6">
+        <Card>
+          <CardContent className="pt-6">
             <h2 className="text-2xl font-semibold mb-4">Instructions</h2>
             <ol className="space-y-4">
-              {instructions?.map((step, index) => (
+            {Array.isArray(instructions) ? (
+              instructions.map((step, index) => (
                 <li key={index} className="flex gap-4">
                   <span className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-teal-100 text-teal-700 rounded-full font-medium">
                     {index + 1}
                   </span>
                   <p className="text-gray-700 pt-1">{step}</p>
                 </li>
-              ))}
+              ))
+            ) : (
+              <li className="text-gray-500">No instructions available.</li>
+            )}
             </ol>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
+      {/* Nutritional Information */}
+    {nutrition && (
+      <Card className="mt-8">
+        <CardContent className="pt-6">
+          <h2 className="text-2xl font-semibold mb-4">Nutritional Information</h2>
+          <div className="grid grid-cols-2 gap-4 text-gray-700">
+            {nutrition.calories && (
+              <div>
+                <p className="text-sm">Calories</p>
+                <p className="font-medium">{nutrition.calories} kcal</p>
+              </div>
+            )}
+            {nutrition.fats && (
+              <div>
+                <p className="text-sm">Fats</p>
+                <p className="font-medium">{nutrition.fats} g</p>
+              </div>
+            )}
+            {nutrition.carbohydrates && (
+              <div>
+                <p className="text-sm">Carbohydrates</p>
+                <p className="font-medium">{nutrition.carbohydrates} g</p>
+              </div>
+            )}
+            {nutrition.proteins && (
+              <div>
+                <p className="text-sm">Proteins</p>
+                <p className="font-medium">{nutrition.proteins} g</p>
+              </div>
+            )}
+            {/* Additional nutrition data fields if available */}
+          </div>
+        </CardContent>
+      </Card>
+    )}
     </main>
   );
 }
