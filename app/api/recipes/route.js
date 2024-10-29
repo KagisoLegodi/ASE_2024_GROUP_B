@@ -1,30 +1,39 @@
-import clientPromise from "@/lib/mongodb"; // MongoDB client
+import clientPromise from "../../../lib/mongodb";
 
 /**
- 
-API route handler for fetching recipes from the 'recipes' collection in MongoDB.
-Handles a GET request and returns a JSON response with the fetched recipes.*
-@async
-@function GET
-@param {Request} request - The incoming request object containing the URL with query parameters.
-@returns {Promise<Response>} - A response object containing the fetched recipes in JSON format
-or an error message if the request fails.*/
-export async function GET() {
- 
-
+ * API route handler for fetching paginated recipes from the 'recipes' collection in MongoDB.
+ *
+ * @async
+ * @function
+ * @param {Object} req - The request object containing query parameters for pagination.
+ * @returns {Promise<void>} Sends a JSON response containing the paginated recipes or an error message.
+ */
+export async function GET(req) {
   try {
-    // Connect to MongoDB
+    // Await the MongoDB client connection
     const client = await clientPromise;
     const db = client.db("devdb"); // Connect to the 'devdb' database
 
-    // Fetch all recipes from the 'recipes' collection
-    const recipes = await db.collection("recipes").find({}).toArray();
+    // Parse the 'page' and 'limit' query parameters from the URL, with defaults
+    const url = new URL(req.url);
+    const page = parseInt(url.searchParams.get("page") || "1", 10); 
+    const limit = parseInt(url.searchParams.get("limit") || "20", 10); 
 
-    // Return the fetched recipes in JSON format with a 200 status code
-    return new Response(JSON.stringify(recipes), { status: 200 });
-  } catch (error) {
-    console.error(error);
-    // Return an error message in JSON format with a 500 status code
-    return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+    // Calculate the number of documents to skip for pagination
+    const skip = (page - 1) * limit;
+
+    // Fetch the paginated recipes from the collection
+    const recipes = await db.collection("recipes")
+      .find({})
+      .skip(skip)
+      .limit(limit)
+      .toArray();
+
+    // Send a 200 (OK) response with the fetched recipes in JSON format
+    return new Response(JSON.stringify({ recipes }), { status: 200 });
+  } catch (e) {
+    
+  
+    return new Response(JSON.stringify({ error: "Failed to fetch data" }), { status: 500 });
   }
-}0
+}
