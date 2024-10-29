@@ -1,26 +1,39 @@
-import { RecipeCard } from './RecipeCard';
+// RecipeCard.stories.js
+import RecipeCard from "./RecipeCard";
 
-// More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
-export default {
-  title: 'Example/RecipeCard',
+// Mock data for the RecipeCard
+const mockRecipe = {
+  title: "Classic Spaghetti Carbonara",
+  prep: 15,
+  cook: 30,
+  images: [
+    "https://images.unsplash.com/photo-1481931098730-318b6f776db0?q=80&w=2790&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  ],
+  published: "2023-09-15",
+};
+
+
+const meta = {
+  title: "RecipeCard/RecipeCard",
   component: RecipeCard,
   parameters: {
-    // Optional parameter to center the component in the Canvas. More info: https://storybook.js.org/docs/configure/story-layout
-    layout: 'centered',
+    layout: "centered",
   },
-  // This component will have an automatically generated Autodocs entry: https://storybook.js.org/docs/writing-docs/autodocs
-  tags: ['autodocs'],
-  // More on argTypes: https://storybook.js.org/docs/api/argtypes
+  tags: ["autodocs"],
   argTypes: {
-    backgroundColor: { control: 'color' },
+    title: { control: 'text' },
+    prep: { control: 'number' },
+    cook: { control: 'number' },
+    images: { control: 'array' },
+    published: { control: 'date' },
   },
+  args: { ...mockRecipe },
 };
 
-// More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
+export default meta;
+
 export const Primary = {
   args: {
-    primary: true,
-    label: 'Button',
+    ...mockRecipe
   },
 };
-
