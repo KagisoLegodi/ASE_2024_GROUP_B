@@ -13,30 +13,32 @@ jobs:
     strategy:
       matrix:
         node-version: [18.x, 20.x, 22.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    env:  # Set environment variables at the job level
+      MONGODB_URI: ${{ secrets.MONGODB_URI }}  # Ensure this is correctly set
 
     steps:
-    - uses: actions/checkout@v4
-
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-
-    - name: Cache node modules
-      uses: actions/cache@v4.1.1
-      with:
-        path: node_modules
-        key: node-modules-${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('package-lock.json') }}
-        restore-keys: |
-          node-modules-${{ runner.os }}-node-${{ matrix.node-version }}
-
-    # Install dependencies with --legacy-peer-deps to avoid peer conflict issues
-    - run: npm ci --legacy-peer-deps
-
-    # Linting step
-    - run: npm run lint
-
-    # Build step
-    - run: npm run build --if-present
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - name: Debug MongoDB URI
+        run: echo "MONGODB_URI is set to: $MONGODB_URI"  # Use the env variable instead of the secret directly
+        env:
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}  
+      - name: Cache node modules
+        uses: actions/cache@v4.1.1
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            node-modules-${{ runner.os }}-node-${{ matrix.node-version }}
+      - run: npm ci --legacy-peer-deps
+      - run: npm run lint
+      - run: npm run build --if-present
+      - name: Run tests
+        run: |
+          cd backend
+          npx mocha --config .mocharc.json
