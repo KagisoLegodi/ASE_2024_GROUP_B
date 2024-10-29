@@ -164,23 +164,14 @@ export default async function RecipeDetail({ params }) {
       {/* Recipe Content */}
       <div className="grid md:grid-cols-2 gap-8">
         {/* Ingredients Section */}
-        <Card>
-          <CardContent className="pt-6">
-            <h2 className="text-2xl font-semibold mb-4">Ingredients</h2>
-            <ul className="space-y-2">
-              {Array.isArray(ingredients) ? (
-                ingredients.map((ingredient, index) => (
-                  <li key={index} className="flex items-start gap-2">
-                    <span className="mt-1.5 w-2 h-2 rounded-full bg-teal-500 flex-shrink-0" />
-                    <span className="text-gray-700">{ingredient}</span>
-                  </li>
-                ))
-              ) : (
-                <li className="text-gray-500">No ingredients available.</li>
-              )}
-            </ul>
-          </CardContent>
-        </Card>
+        <div>
+          <h2 className="text-2xl font-semibold mb-4">Ingredients</h2>
+          <ul className="space-y-2">
+            {ingredients?.map((ingredient, index) => (
+              <li key={index} className="flex items-start gap-2">
+                <span className="mt-1.5 w-2 h-2 rounded-full bg-teal-500 flex-shrink-0" />
+                <span className="text-gray-700">{ingredient}</span>
+              </li>
         {/* Instructions Section */}
         <Card>
           <CardContent className="pt-6">
