@@ -1,30 +1,30 @@
 import Link from "next/link";
 import Carousel from "./Carousel";
 
+export default function RecipeCard(recipe) {
+  const formatDate = (dateString) => {
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    const date = new Date(dateString);
+    return date.toLocaleDateString(undefined, options);
+  };
 
-export default function RecipeCard({ recipe }) {
-  
-    const formatDate = (dateString) => {
-      const options = { year: 'numeric', month: 'long', day: 'numeric' };
-      const date = new Date(dateString);
-      return date.toLocaleDateString(undefined, options);
-    };
-  
+  const totalTime = (recipe.prep || 0) + (recipe.cook || 0);
   return (
-    <div>
-    <div className=" bg-white shadow-soft rounded-lg overflow-hidden shadow hover:shadow-lg transition-shadow p-6">
-    <Carousel
+    <div className=" bg-peach rounded-lg overflow-hidden shadow-md hover:shadow-2xl hover:shadow-orange-700 p-4">
+      <Carousel
         images={recipe.images}
         alt={recipe.title}
-        className="w-full h-40 object-cover rounded-md"
+        className="w-full h-48 object-cover rounded-md"
       />
-      <div className="absolute inset-0 z-10"></div>
-      <h3 className="text-black font-bold mt-2 text-lg text-gradient-primary">
-        {recipe.title}
-      </h3>
+      <p className="text-gray-600 text-xs mt-1">Published : {formatDate(recipe.published)}</p>
+      <div className="p-4">
+        <h3 className="text-brown font-bold text-xl">
+          {recipe.title}
+        </h3>
 
-      <div className="flex flex-row justify-between items-center mt-2">
-        <p className="flex flex-col items-center fill-current text-gray-400 p-4">
+
+        <div className="flex items-center justify-between mt-3 p-4">
+        <p className="flex flex-col items-center fill-current text-green-800  flex-grow text-center">
           <svg
             fill="#000000"
             width="25px"
@@ -45,7 +45,7 @@ export default function RecipeCard({ recipe }) {
           {recipe.prep} mins
         </p>
 
-        <p className="flex flex-col items-center fill-current text-gray-400 flex-grow text-center">
+        <p className="flex flex-col items-center fill-current text-green-900 flex-grow text-center">
           <svg
             fill="#000000"
             height="25px"
@@ -70,19 +70,47 @@ export default function RecipeCard({ recipe }) {
           {recipe.cook} mins
         </p>
 
-        <p>{recipe.servings}Servings</p>
+        <p
+        className="flex flex-col items-center fill-current text-green-800 flex-grow text-center">
+        
+        <svg width="25px" height="25px" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#000000">
+  <circle cx="32" cy="32" r="24" />
+  <polyline points="40 44 32 32 32 16" stroke-width="4px" />
+</svg>
 
-        <p>{formatDate(recipe.published)}</p>
+        {totalTime} Mins Total</p>
+
+        <p className="flex flex-col items-center fill-current text-green-800 flex-grow text-center">
+        <svg
+    fill="#000000"
+    height="25px"
+    width="25px"
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 512 512"
+>
+    <g>
+        <path
+            d="M503.83,388.085H8.17c-4.513,0-8.17,3.657-8.17,8.17s3.657,8.17,8.17,8.17h25.333c3.795,18.624,20.3,32.681,40.029,32.681h364.936c19.728,0,36.233-14.057,40.029-32.681h25.333c4.513,0,8.17-3.657,8.17-8.17S508.343,388.085,503.83,388.085z M438.468,420.766H73.532c-10.651,0-19.733-6.831-23.105-16.34h411.147C458.201,413.935,449.119,420.766,438.468,420.766z"
+        />
+        <circle cx="156.868" cy="232.851" r="8.17" />
+        <circle cx="124.187" cy="265.532" r="8.17" />
+        <path
+            d="M264.17,140.421v-16.506h24.511c4.513,0,8.17-3.657,8.17-8.17c0-22.526-18.325-40.851-40.851-40.851s-40.851,18.325-40.851,40.851c0,4.513,3.657,8.17,8.17,8.17s8.17-3.657,8.17-8.17c0-13.515,10.996-24.511,24.511-24.511c10.652,0,19.738,6.83,23.111,16.34H256c-4.513,0-8.17,3.657-8.17,8.17v24.676C128.463,144.737,32.681,243.173,32.681,363.574c0,4.513,3.657,8.17,8.17,8.17s8.17-3.657,8.17-8.17c0-114.129,92.85-206.979,206.979-206.979s206.979,92.85,206.979,206.979c0,4.513,3.657,8.17,8.17,8.17s8.17-3.657,8.17-8.17C479.319,243.173,383.537,144.737,264.17,140.421z"
+        />
+    </g>
+</svg>
+
+            {recipe.servings} Servings
+          </p>
+        </div>
+
+        <Link
+          href={`/recipes/${recipe._id}`}
+          className="mt-4 block text-center text-white bg-brown rounded-full py-2 hover:bg-green-800 transition duration-200"
+        >
+          Get Cooking
+        </Link>
       </div>
-
-      
     </div>
-    <Link
-   href={`/recipes/${recipe._id}`}
-    className="bg-gray-600 p-4 rounded-lg flex justify-end hover:bg-pink-100 hover:transform hover:scale-101 transition-all duration-300 ease-in-out"
-  >
-    Get Cooking
-  </Link>
-  </div>
   );
 }
