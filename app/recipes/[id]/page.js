@@ -21,6 +21,7 @@ export default async function RecipeDetail({ params }) {
   const { id } = params;
   let recipe;
 
+  // Fetch recipe data
   try {
     // Fetch recipe data from the API
     const data = await fetchProductById(id);
@@ -180,7 +181,6 @@ export default async function RecipeDetail({ params }) {
             </ul>
           </CardContent>
         </Card>
-
         {/* Instructions Section */}
         <Card>
           <CardContent className="pt-6">
