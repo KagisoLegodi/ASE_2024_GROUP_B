@@ -2,7 +2,7 @@ import { fn } from '@storybook/test';
 
 import { Header } from './Header';
 
-export default {
+const meta = {
   title: 'Example/Header',
   component: Header,
   // This component will have an automatically generated Autodocs entry: https://storybook.js.org/docs/writing-docs/autodocs
@@ -17,6 +17,9 @@ export default {
     onCreateAccount: fn(),
   },
 };
+
+export default meta;
+
 export const LoggedIn = {
   args: {
     user: {
@@ -25,6 +28,4 @@ export const LoggedIn = {
   },
 };
 
-export const LoggedOut = {
-  args: {},
-};
+export const LoggedOut = {};
