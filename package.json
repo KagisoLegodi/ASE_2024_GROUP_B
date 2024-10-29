@@ -7,7 +7,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "ajv": "^8.17.1",
@@ -17,6 +19,7 @@
     "dotenv": "^16.4.5",
     "framer-motion": "^11.11.9",
     "keyv": "^5.1.2",
+    "lucide-react": "^0.453.0",
     "mongodb": "^6.10.0",
     "next": "^14.2.16",
     "react": "^18.3.1",
@@ -24,6 +27,16 @@
     "tailwind-merge": "^2.5.4"
   },
   "devDependencies": {
+    "@chromatic-com/storybook": "^1.9.0",
+    "@storybook/addon-essentials": "^8.3.6",
+    "@storybook/addon-interactions": "^8.3.6",
+    "@storybook/addon-links": "^8.3.6",
+    "@storybook/addon-onboarding": "^8.3.6",
+    "@storybook/addon-styling-webpack": "^1.0.0",
+    "@storybook/blocks": "^8.3.6",
+    "@storybook/nextjs": "^8.3.6",
+    "@storybook/react": "^8.3.6",
+    "@storybook/test": "^8.3.6",
     "eslint": "^8",
     "eslint-config-next": "^14.2.15",
     "eslint-plugin-storybook": "^0.10.1",
