@@ -1,6 +1,7 @@
 import { fetchProductById } from "../../../lib/api";
 import Image from "next/image";
 import { Clock, Users } from "lucide-react";
+import { Card, CardContent } from "../../components/ui/card";
 
 /**
  * The RecipeDetail component fetches and displays a specific recipe based on its ID.
@@ -20,6 +21,7 @@ export default async function RecipeDetail({ params }) {
   const { id } = params;
   let recipe;
 
+  // Fetch recipe data
   try {
     // Fetch recipe data from the API
     const data = await fetchProductById(id);
@@ -170,12 +172,9 @@ export default async function RecipeDetail({ params }) {
                 <span className="mt-1.5 w-2 h-2 rounded-full bg-teal-500 flex-shrink-0" />
                 <span className="text-gray-700">{ingredient}</span>
               </li>
-            ))}
-          </ul>
-        </div>
         {/* Instructions Section */}
-        <div>
-          <div className="pt-6">
+        <Card>
+          <CardContent className="pt-6">
             <h2 className="text-2xl font-semibold mb-4">Instructions</h2>
             <ol className="space-y-4">
             {Array.isArray(instructions) ? (
@@ -191,8 +190,8 @@ export default async function RecipeDetail({ params }) {
               <li className="text-gray-500">No instructions available.</li>
             )}
             </ol>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
       {/* Nutritional Information */}
     {nutrition && (
