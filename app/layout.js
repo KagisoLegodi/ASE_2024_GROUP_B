@@ -19,7 +19,7 @@ export const metadata = {
   applicationName: "ArejengRecipeApp",
   openGraph: {
     title: "Arejeng Recipe App",
-    description: "Arejeng Recipe App is your ultimate culinary companion, offering an extensive collection of easy-to-follow recipes that cater to every taste and occasion. Whether you're a seasoned chef or a kitchen newbie, our app empowers you to discover, save, and share delicious recipes from around the world. With step-by-step instructions, customizable recipe options, and handy cooking tips, Arejeng Recipe App makes every meal a memorable experience. Explore new flavors, create mouth-watering dishes, and let your cooking journey begin",
+    description: "Discover a variety of recipes with ArejengRecipeApp",
     // Uncomment and add the correct URL of the website if available
     // url: "https://mywebsite.com", 
     type: "website",
@@ -33,8 +33,15 @@ export const metadata = {
       },
     ],
   },
+  twitter: {
+    card: "summary_large_image",
+    site: "@YourTwitterHandle",
+    title: "Arejeng Recipe App",
+    description: "Discover a variety of recipes with ArejengRecipeApp",
+    image: "https://yourwebsite.com/twitter-image.jpg",
+  },
   keywords: ["recipes", "cooking", "food", "ArejengRecipeApp"],
-  author: "Neo Phetoane, Gomolemo Mogono, Omphile Morwane, Ikanyeng Adams, Kagiso Legodi, Jonas Mokawane $ Hlolelo Rampete", 
+  author: "Name of author", // Add the name of the author here
 };
 
 /**
