@@ -14,6 +14,7 @@ export const Page = () => {
         onLogout={() => setUser(undefined)}
         onCreateAccount={() => setUser({ name: 'Jane Doe' })}
       />
+
       <section className="storybook-page">
         <h2>Pages in Storybook</h2>
         <p>
@@ -31,7 +32,7 @@ export const Page = () => {
         <ul>
           <li>
             Use a higher-level connected component. Storybook helps you compose such data from the
-            &quot;args&quot; of child component stories
+            &aposargs&apos of child component stories
           </li>
           <li>
             Assemble data in the page component from your services. You can mock these services out
