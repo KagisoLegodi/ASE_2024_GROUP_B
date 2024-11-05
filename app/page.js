@@ -1,5 +1,6 @@
 import Link from "next/link";
 import RecipeCard from "./components/RecipeCard";
+import FilterIndicator from "./components/FilterIndicator"; // Import the new component
 import { fetchRecipes } from "../lib/api";
 
 /**
@@ -15,8 +16,9 @@ export default async function Home({ searchParams }) {
   const page = parseInt(searchParams.page, 10) || 1;
   const limit = 20;
 
-  // Get selected filter option from search params
+  // Get selected filters from search params
   const selectedFilter = searchParams.filter || "none";
+  const stepsFilter = parseInt(searchParams.steps, 10) || null;
 
   // Fetch recipes based on the current page
   const data = await fetchRecipes(page, limit);
@@ -84,7 +86,27 @@ export default async function Home({ searchParams }) {
           <option value="none">Select a filter</option>
           {/* EXAMPLE <option value="low-calories">Low Calories</option> */}
         </select>
-        <button type="submit" className="ml-2 px-4 py-2 bg-blue-500 text-white rounded">
+
+        {/* Filter by Number of Steps */}
+        <label
+          htmlFor="steps"
+          className="block text-lg font-semibold mt-4 mb-2"
+        >
+          Filter by Number of Steps:
+        </label>
+        <input
+          type="number"
+          id="steps"
+          name="steps"
+          placeholder="Enter steps"
+          defaultValue={stepsFilter || ""}
+          className="p-2 border rounded"
+        />
+
+        <button
+          type="submit"
+          className="ml-2 px-4 py-2 bg-blue-500 text-white rounded"
+        >
           Apply
         </button>
       </form>
