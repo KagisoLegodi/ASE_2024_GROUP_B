@@ -155,6 +155,8 @@ export default async function Home({ params, searchParams }) {
           Apply
         </button>
       </form>
+  {/* Search Bar */}
+  <SearchBar/>
     </main>
   );
 }
