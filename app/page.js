@@ -45,11 +45,13 @@ export default async function Home({ params, searchParams }) {
 
   return (
     <main>
-      <div className="flex space-x-20 items-center mb-8">
-        {/* Search Bar */}
-        <SearchBar />
-        {/* Add margin-top to the flex container to separate it from the SearchBar */}
-        <div className="flex items-center space-x-4 mb-6 mt-2">
+      <div className="flex justify-between items-center mb-8">
+        {/* Center Search Bar */}
+        <div className="flex-1 flex justify-center">
+          <SearchBar />
+        </div>
+        {/* Right-aligned Advanced Filtering, lowered even further with mt-6 */}
+        <div className="ml-4 flex items-center mt-6"> {/* Increased margin-top to mt-6 */}
           <AdvancedFiltering
             selectedCategory={searchParamsToInclude.category}
             selectedSteps={searchParamsToInclude.selectedSteps}
