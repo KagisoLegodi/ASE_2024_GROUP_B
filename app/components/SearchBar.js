@@ -1,9 +1,19 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { fetchRecipes } from "../../lib/api"; // Adjust this import based on your project structure
 
+/**
+ * A search bar component that allows users to search for recipes by title and category.
+ * It handles query debouncing, search parameter updates, and redirects based on user input.
+ *
+ * @component
+ * @example
+ * return (
+ *   <SearchBar />
+ * )
+ */
 const SearchBar = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -13,6 +23,8 @@ const SearchBar = () => {
   let debounceTimeout = useRef(null); // Ref to hold the debounce timer
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [searchTagsQuery, setTagsSearchQuery] = useState(""); // State for the category input
+  const [searchStepsQuery, setStepsSearchQuery] = useState(""); // State for the category input
 
 
   /**
@@ -24,26 +36,29 @@ const SearchBar = () => {
     setTextSearchQuery(search);
     const category = searchParams.get("category") || "";
     setCategorySearchQuery(category);
+    const tags = searchParams.get("tags") || "";
+    setTagsSearchQuery(tags);
+    const steps = searchParams.get("steps") || "";
+    setStepsSearchQuery(steps);
   }, [searchParams]);
 
-    // Handle debounce for fetching suggestions
-    const fetchSuggestions = async (query) => {
-      if (query.length < 3) {
-        setSuggestions([]);
-        return;
-      }
-  
-      try {
-        const data = await fetchRecipes(1, 5, query); // Get limited suggestions
-        setSuggestions(data);
-        setShowSuggestions(data.length > 0);
-      } catch (error) {
-        console.error("Error fetching suggestions:", error);
-        setSuggestions([]);
-      }
-    };
+  // Handle debounce for fetching suggestions
+  const fetchSuggestions = async (query) => {
+    if (query.length < 3) {
+      setSuggestions([]);
+      return;
+    }
 
- 
+    try {
+      const data = await fetchRecipes(1, 5, query, searchCategoryQuery, searchTagsQuery, searchStepsQuery); // Get limited suggestions
+      setSuggestions(data);
+      setShowSuggestions(data.length > 0);
+    } catch (error) {
+      console.error("Error fetching suggestions:", error);
+      setSuggestions([]);
+    }
+  };
+
   /**
    * Handles the search form submission, constructs a new search URL,
    * and redirects the user to the updated URL with query parameters.
@@ -61,45 +76,44 @@ const SearchBar = () => {
       } else {
         newSearchParams.delete("search");
       }
-      
+
       let url = `/?page=1&limit=20`;
 
       if (searchTextQuery && searchTextQuery.trim() !== "") {
         url += `&search=${encodeURIComponent(searchTextQuery)}`;
       }
-      
+
       if (searchCategoryQuery && searchCategoryQuery.trim() !== "") {
         url += `&category=${encodeURIComponent(searchCategoryQuery)}`;
       }
-  
+
       // Redirect to the new URL with updated search parameters
       router.push(url);
     },
     [router, searchCategoryQuery, searchTextQuery, searchParams]
   );
 
-    // Debounced search input handler
-    const handleInputChange = (e) => {
-      const value = e.target.value;
-      setTextSearchQuery(value);
-  
-      // Clear any existing debounce
-      clearTimeout(debounceTimeout);
-  
-      // Set debounce for 300ms
-      debounceTimeout = setTimeout(() => {
-        fetchSuggestions(value);
-      }, 300);
-    };
+  // Debounced search input handler
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setTextSearchQuery(value);
 
-      // Handle selection of an auto-suggested title
+    // Clear any existing debounce
+    clearTimeout(debounceTimeout);
+
+    // Set debounce for 300ms
+    debounceTimeout = setTimeout(() => {
+      fetchSuggestions(value);
+    }, 300);
+  };
+
+  // Handle selection of an auto-suggested title
   const handleSuggestionClick = (title) => {
     setTextSearchQuery(title);
     setShowSuggestions(false); // Close the suggestion pop-up
     performSearch(title); // Fetch the full recipe details
   };
 
-   
   /**
    * Sets up a debounce effect to auto-submit the search for short queries (1-3 characters).
    * Clears the previous debounce timer when searchTextQuery changes.
@@ -109,7 +123,6 @@ const SearchBar = () => {
       clearTimeout(debounceTimeout.current); // Clear the previous timer
     }
 
-   
     // Only debounce for short queries (1-3 characters)
     if (
       searchTextQuery.trim().length > 0 &&
@@ -126,23 +139,25 @@ const SearchBar = () => {
 
   return (
     <div className="relative flex justify-center mt-8">
-    <form onSubmit={(event)=> {handleSearch}} className="flex justify-center mt-8">
+      <form onSubmit={handleSearch} className="flex justify-center mt-8">
         <input
           type="text"
           placeholder="Search for recipes..."
           value={searchTextQuery}
-          onChange={(e) => {handleInputChange(e)}}
+          onChange={(e) => {
+            handleInputChange(e);
+          }}
           className="w-full max-w-lg px-4 py-2 border-2 border-gray-400 rounded-l-md focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-600 text-black"
         />
-      <button
-        type="submit"
-        className="px-6 py-2 text-white bg-black hover:bg-gray-800 rounded-r-md shadow-md transition-all duration-300"
-      >
-        Search
-      </button>
-    </form>
-          {/* Auto-suggestions Dropdown */}
-          {showSuggestions && (
+        <button
+          type="submit"
+          className="px-6 py-2 text-white bg-black hover:bg-gray-800 rounded-r-md shadow-md transition-all duration-300"
+        >
+          Search
+        </button>
+      </form>
+      {/* Auto-suggestions Dropdown */}
+      {showSuggestions && (
         <div className="absolute top-full mt-1 w-full max-w-lg bg-white border border-gray-300 rounded-md shadow-lg z-10">
           {suggestions.length > 0 ? (
             suggestions.map((suggestion) => (
