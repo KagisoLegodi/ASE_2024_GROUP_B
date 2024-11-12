@@ -1,20 +1,9 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { fetchRecipes } from "../../lib/api"; // Adjust this import based on your project structure
 
-
-/**
- * A search bar component that allows users to search for recipes by title and category.
- * It handles query debouncing, search parameter updates, and redirects based on user input.
- *
- * @component
- * @example
- * return (
- *   <SearchBar />
- * )
- */
 const SearchBar = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
