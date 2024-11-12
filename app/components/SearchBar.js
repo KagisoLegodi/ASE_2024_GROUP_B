@@ -68,7 +68,7 @@ const SearchBar = () => {
       newSearchParams.delete("search");
     }
     
-    let url = `/?page=1&limit=20&search=${encodeURIComponent(query)}`;
+    let url = `/recipe?page=1&limit=20&search=${encodeURIComponent(query)}`;
     
     if (searchCategoryQuery && searchCategoryQuery.trim() !== "") {
       url += `&category=${encodeURIComponent(searchCategoryQuery)}`;
