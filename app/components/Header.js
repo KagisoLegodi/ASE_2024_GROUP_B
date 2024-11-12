@@ -37,7 +37,9 @@ const Header = () => {
               </svg>
             </span>
           </Link>
+
           <Link href="/recipe">
+
             <span className="hover:text-gray-500 cursor-pointer">Recipes</span>
           </Link>
           <Link href="/favourites">

@@ -63,7 +63,9 @@ export default function AdvancedFiltering({
     setLocalSelectedTags([]);
     setSelectedCategory(null);
     setLocalSelectedSteps("");
+
     router.push(`/recipe?page=${page}`);
+
   };
 
   const handleClearTags = () => {
@@ -73,7 +75,9 @@ export default function AdvancedFiltering({
     const stepsParam = localSelectedSteps ? `&steps=${localSelectedSteps}` : '';
     const searchParam = search ? `&search=${encodeURIComponent(search)}` : '';
 
+
     router.push(`/recipe?page=${page}${searchParam}${categoryParam}${stepsParam}`); 
+
   };
 
   const handleApplyFilters = () => {
