@@ -97,10 +97,12 @@ export default function AdvancedFiltering({
 
       {/* Sliding Panel */}
       <div
-        className={`absolute right-0 top-18 min-w-[280px] mt-2 bg-white border border-gray-300 rounded-lg shadow-lg p-4 space-y-4 z-10 max-h-[500px] flex flex-col transition-transform duration-300 ease-in-out ${
-          isFilterOpen ? "transform translate-x-0" : "transform translate-x-full"
-        }`}
-      >
+  className={`absolute right-0 top-18 min-w-[280px] mt-2 bg-white border border-gray-300 rounded-lg shadow-lg p-4 space-y-4 z-10 max-h-[500px] flex flex-col transition-all duration-300 ease-in-out ${
+    isFilterOpen ? "translate-x-0 opacity-100" : "translate-x-full opacity-0 hidden"
+  }`}
+  style={{ display: isFilterOpen ? "flex" : "none" }}
+>
+
         <div className="flex justify-between mb-4">
           <button
             onClick={handleClearAllFilters}
