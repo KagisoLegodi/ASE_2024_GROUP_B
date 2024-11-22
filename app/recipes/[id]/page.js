@@ -68,6 +68,7 @@ export default async function RecipeDetail({ params }) {
         >
           Back to Home
         </a>
+        <ReadInstructionsButton instructions={instructions} />
       </div>
 
       {/* Tags */}
@@ -138,14 +139,32 @@ export default async function RecipeDetail({ params }) {
         </div>
       )}
 
-      {/* "Read Instructions" Button */}
-      <div className="mb-6">
-        <ReadInstructionsButton />
-      </div>
-
-      {/* Instructions Section */}
-      <div id="instructions-section" className="mt-12">
+      {/* Ingredients */}
+      <div className="grid md:grid-cols-2 gap-8">
         <Card>
+          <CardContent className="pt-6">
+            <h2 className="text-2xl font-semibold mb-4">Ingredients</h2>
+            <ul className="space-y-2">
+              {ingredients && Object.keys(ingredients).length > 0 ? (
+                Object.entries(ingredients).map(
+                  ([ingredient, quantity], index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <span className="mt-1.5 w-2 h-2 rounded-full bg-teal-500 flex-shrink-0" />
+                      <span className="text-gray-700">
+                        {quantity} {ingredient}
+                      </span>
+                    </li>
+                  )
+                )
+              ) : (
+                <li className="text-gray-500">No ingredients available.</li>
+              )}
+            </ul>
+          </CardContent>
+        </Card>
+        
+        {/* Instructions */}
+        <Card id="instructions-section">
           <CardContent className="pt-6">
             <h2 className="text-2xl font-semibold mb-4">Instructions</h2>
             <ol className="space-y-4">
