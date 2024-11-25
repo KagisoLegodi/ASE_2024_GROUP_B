@@ -6,8 +6,13 @@ const RecipeReviews = ({ recipeId }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // States for review submission
+  const [username, setUsername] = useState("");
+  const [reviewText, setReviewText] = useState("");
+  const [rating, setRating] = useState(5);
+  const [submitting, setSubmitting] = useState(false);
+
   useEffect(() => {
-    // Guard clause for missing recipeId
     if (!recipeId) {
       setError("Recipe ID is missing.");
       setLoading(false);
@@ -17,11 +22,9 @@ const RecipeReviews = ({ recipeId }) => {
     const fetchReviews = async () => {
       try {
         const res = await fetch(`/api/reviews/${recipeId}`);
-        if (!res.ok) {
-          throw new Error(`Error: ${res.statusText}`);
-        }
-        const data = await res.json();
+        if (!res.ok) throw new Error(`Error: ${res.statusText}`);
 
+        const data = await res.json();
         if (data.success) {
           setReviews(data.data);
         } else {
@@ -38,24 +41,99 @@ const RecipeReviews = ({ recipeId }) => {
     fetchReviews();
   }, [recipeId]);
 
-  // Render loading state
-  if (loading) {
-    return <p>Loading reviews...</p>;
-  }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
 
-  // Render error state
-  if (error) {
-    return <p className="text-red-500">Error: {error}</p>;
-  }
+    try {
+      const res = await fetch(`/api/reviews/${recipeId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username,
+          rating,
+          review: reviewText,
+        }),
+      });
 
-  // Render reviews
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || "Failed to submit review.");
+      }
+
+      // Fetch updated reviews after submission
+      setReviews((prev) => [
+        { username, date: new Date(), rating, review: reviewText },
+        ...prev,
+      ]);
+      setUsername("");
+      setReviewText("");
+      setRating(5);
+    } catch (err) {
+      console.error("Error submitting review:", err);
+      setError("Unable to submit review. Please try again later.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  if (loading) return <p>Loading reviews...</p>;
+  if (error) return <p className="text-red-500">Error: {error}</p>;
+
   return (
     <section className="mt-8">
       <h2 className="text-2xl font-semibold mb-4">Reviews</h2>
+
+      {/* Review Submission Form */}
+      <form onSubmit={handleSubmit} className="mb-6">
+        <div className="mb-4">
+          <label className="block text-sm font-medium mb-1">Username</label>
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="w-full border rounded p-2"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium mb-1">Your Review</label>
+          <textarea
+            value={reviewText}
+            onChange={(e) => setReviewText(e.target.value)}
+            rows="4"
+            className="w-full border rounded p-2"
+            required
+          ></textarea>
+        </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium mb-1">Rating</label>
+          <select
+            value={rating}
+            onChange={(e) => setRating(Number(e.target.value))}
+            className="w-full border rounded p-2"
+          >
+            {[...Array(5)].map((_, i) => (
+              <option key={i + 1} value={i + 1}>
+                {i + 1} Star{(i + 1) > 1 ? "s" : ""}
+              </option>
+            ))}
+          </select>
+        </div>
+        <button
+          type="submit"
+          disabled={submitting}
+          className="bg-teal-600 text-white py-2 px-4 rounded hover:bg-teal-700"
+        >
+          {submitting ? "Submitting..." : "Submit Review"}
+        </button>
+      </form>
+
+      {/* Render Reviews */}
       {reviews.length > 0 ? (
         <div className="space-y-4">
-          {reviews.map((review) => (
-            <ReviewCard key={review._id} review={review} />
+          {reviews.map((review, index) => (
+            <ReviewCard key={index} review={review} />
           ))}
         </div>
       ) : (
