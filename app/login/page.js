@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 /**
  * Login Component
@@ -16,7 +17,11 @@ export default function Login() {
   const [loading, setLoading] = useState(false); // State to manage the loading indicator
   const [showPassword, setShowPassword] = useState(false); // State for toggling password visibility
 
-  /**
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirectTo") || "/"; // Default to home if no redirect specified
+
+    /**
    * Handles form submission and sends data to the backend.
    *
    * @param {React.FormEvent<HTMLFormElement>} e - The form submit event.
@@ -47,8 +52,7 @@ export default function Login() {
       if (response.status === 200) {
         const data = await response.json();
         setSuccess("Login successful!");
-        setEmail("");
-        setPassword("");
+        router.push(redirectTo); // Redirect to intended page
       } else {
         const errorData = await response.json();
         setError(errorData.error || "Invalid email or password. Please try again.");

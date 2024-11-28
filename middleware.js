@@ -9,8 +9,10 @@ export async function middleware(req) {
   const token = req.cookies.get("token");
 
   if (!token) {
-    console.log("No token found in cookies.");
-    return new Response("Unauthorized: No token found", { status: 401 });
+    // Redirect to login and include the original requested path as a query parameter
+    const redirectUrl = new URL("/login", req.url);
+    redirectUrl.searchParams.set("redirectTo", req.nextUrl.pathname);
+    return NextResponse.redirect(redirectUrl);
   }
 
   try {
@@ -18,19 +20,18 @@ export async function middleware(req) {
     const secret = new TextEncoder().encode(process.env.JWT_SECRET);
     const { payload } = await jwtVerify(token.value, secret);
 
-    // Attach the decoded user information to the request object
-    req.user = payload;
-    console.log("Token verified", payload);
-
+    req.user = payload; // Attach user data to the request object
     // Proceed with the request
     return NextResponse.next();
   } catch (error) {
-    console.log("Token verification failed:", error.message);
-    return new Response("Unauthorized: Invalid token", { status: 401 });
+    // Redirect to login for invalid token
+    const redirectUrl = new URL("/login", req.url);
+    redirectUrl.searchParams.set("redirectTo", req.nextUrl.pathname);
+    return NextResponse.redirect(redirectUrl);
   }
 }
 
 // Apply the middleware only to specific routes
 export const config = {
-  matcher: ["/api/test"],
+  matcher: ["/recipe"], // Add routes requiring authentication
 };
