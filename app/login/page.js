@@ -13,6 +13,7 @@ export default function Login() {
   const [email, setEmail] = useState(""); // State for email input
   const [password, setPassword] = useState(""); // State for password input
   const [error, setError] = useState(""); // State for error messages
+  const [success, setSuccess] = useState(""); // State for success messages
   const [loading, setLoading] = useState(false); // State to manage the loading indicator
   const [showPassword, setShowPassword] = useState(false); // State for toggling password visibility
   const [isLoggedIn, setIsLoggedIn] = useState(false); // State to track login status
@@ -46,23 +47,17 @@ export default function Login() {
     try {
       const response = await fetch("/api/authorisation/login", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-
-      setLoading(false); // Stop loading
-      if (response.status === 200) {
-        setIsLoggedIn(true); // Mark as logged in
-      } else {
-        const errorData = await response.json();
-        setError(errorData.error || "Invalid email or password. Please try again.");
-      }
+    
+      if (!response.ok) throw new Error("Login failed");
+      const data = await response.json();
+      setSuccess("Login successful!");
+      router.push(redirectTo);
     } catch (err) {
-      setLoading(false); // Stop loading
-      setError("Failed to connect to the server. Please check your network and try again.");
-    }
+      setError(err.message || "Unexpected error occurred.");
+    }    
   };
 
   return (
