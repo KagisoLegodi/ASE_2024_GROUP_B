@@ -13,14 +13,19 @@ export default function Login() {
   const [email, setEmail] = useState(""); // State for email input
   const [password, setPassword] = useState(""); // State for password input
   const [error, setError] = useState(""); // State for error messages
-  const [success, setSuccess] = useState(""); // State for success messages
   const [loading, setLoading] = useState(false); // State to manage the loading indicator
   const [showPassword, setShowPassword] = useState(false); // State for toggling password visibility
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // State to track login status
 
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get("redirectTo") || "/"; // Default to home if no redirect specified
 
+  useEffect(() => {
+    if (isLoggedIn) {
+      router.push(redirectTo); // Redirect to intended page if logged in
+    }
+  }, [isLoggedIn, redirectTo, router]);
     /**
    * Handles form submission and sends data to the backend.
    *
@@ -29,7 +34,6 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    setSuccess("");
     setLoading(true); // Show loading indicator
 
     // Validation
@@ -50,9 +54,7 @@ export default function Login() {
 
       setLoading(false); // Stop loading
       if (response.status === 200) {
-        const data = await response.json();
-        setSuccess("Login successful!");
-        router.push(redirectTo); // Redirect to intended page
+        setIsLoggedIn(true); // Mark as logged in
       } else {
         const errorData = await response.json();
         setError(errorData.error || "Invalid email or password. Please try again.");
@@ -70,7 +72,6 @@ export default function Login() {
           Log In
         </h1>
         {error && <p className="text-sm text-red-600 mb-4">{error}</p>}
-        {success && <p className="text-sm text-green-600 mb-4">{success}</p>}
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">
