@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import React, { useState } from "react";
 
 /**
  * Login Component
@@ -13,21 +13,13 @@ export default function Login() {
   const [email, setEmail] = useState(""); // State for email input
   const [password, setPassword] = useState(""); // State for password input
   const [error, setError] = useState(""); // State for error messages
-  const [success, setSuccess] = useState(""); // State for success messages
-  const [loading, setLoading] = useState(false); // State to manage the loading indicator
+  const [loading, setLoading] = useState(false); // State for loading indicator
   const [showPassword, setShowPassword] = useState(false); // State for toggling password visibility
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // State to track login status
-
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get("redirectTo") || "/"; // Default to home if no redirect specified
 
-  useEffect(() => {
-    if (isLoggedIn) {
-      router.push(redirectTo); // Redirect to intended page if logged in
-    }
-  }, [isLoggedIn, redirectTo, router]);
-    /**
+  /**
    * Handles form submission and sends data to the backend.
    *
    * @param {React.FormEvent<HTMLFormElement>} e - The form submit event.
@@ -35,12 +27,12 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    setLoading(true); // Show loading indicator
+    setLoading(true); // Start loading indicator
 
     // Validation
     if (!email || !password) {
       setError("Both fields are required.");
-      setLoading(false); // Stop loading
+      setLoading(false);
       return;
     }
 
@@ -50,14 +42,19 @@ export default function Login() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-    
-      if (!response.ok) throw new Error("Login failed");
-      const data = await response.json();
-      setSuccess("Login successful!");
-      router.push(redirectTo);
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.message || "Login failed");
+      }
+
+      // Redirect to the intended page after successful login
+      router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/${redirectTo}`);
     } catch (err) {
       setError(err.message || "Unexpected error occurred.");
-    }    
+    } finally {
+      setLoading(false); // Stop loading indicator
+    }
   };
 
   return (
@@ -108,9 +105,9 @@ export default function Login() {
             className={`w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-300 transition duration-200 ${
               loading ? "opacity-50 cursor-not-allowed" : ""
             }`}
-            disabled={loading} // Disable button while loading
+            disabled={loading}
           >
-            {loading ? "Logging you in..." : "Log In"}
+            {loading ? "Logging in..." : "Log In"}
           </button>
         </form>
         <p className="text-center text-sm text-gray-500 mt-4">

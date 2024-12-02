@@ -20,9 +20,16 @@ export async function middleware(req) {
     const secret = new TextEncoder().encode(process.env.JWT_SECRET);
     const { payload } = await jwtVerify(token.value, secret);
 
-    req.user = payload; // Attach user data to the request object
+    // Attach user data to headers for further use in server-side logic
+    const newHeaders = new Headers(req.headers);
+    newHeaders.set("x-user", JSON.stringify(payload));
+
     // Proceed with the request
-    return NextResponse.next();
+    return NextResponse.next({
+      request: {
+        headers: newHeaders,
+      },
+    });
   } catch (error) {
     // Redirect to login for invalid token
     const redirectUrl = new URL("/login", req.url);
@@ -33,5 +40,5 @@ export async function middleware(req) {
 
 // Apply the middleware only to specific routes
 export const config = {
-  matcher: ["/recipe"], // Add routes requiring authentication
+  matcher: ["/favourites"], // Add routes requiring authentication
 };
