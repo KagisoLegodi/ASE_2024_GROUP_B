@@ -46,7 +46,7 @@ export default async function RecipeDetail({ params }) {
           href="/"
           className="mt-4 inline-block text-white bg-brown rounded-full px-6 py-2 hover:bg-green-800 transition duration-200"
         >
-          Back to Home
+          Back to Recipes
         </a>
       </div>
     );
@@ -60,7 +60,7 @@ export default async function RecipeDetail({ params }) {
           href="/"
           className="mt-4 inline-block text-white bg-brown rounded-full px-6 py-2 hover:bg-green-800 transition duration-200"
         >
-          Back to Home
+          Back to Recipes
         </a>
       </div>
     );
@@ -91,7 +91,7 @@ export default async function RecipeDetail({ params }) {
         <a
           href="/recipe"
           className="text-white bg-brown px-6 py-2 rounded-lg hover:bg-peach transition duration-200"
-          title="Back"
+          title="Back  to Recipes"
         >
           <Home className="w-5 h-5" />
         </a>
