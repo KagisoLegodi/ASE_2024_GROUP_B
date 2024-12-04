@@ -29,11 +29,6 @@ const Header = () => {
               />
             </div>
           </Link>
-          <Link href="/">
-            <h1 className="text-[var(--header-text)] text-xl md:text-2xl font-bold">
-              Arejeng
-            </h1>
-          </Link>
         </div>
 
         {/* Navigation Links */}
