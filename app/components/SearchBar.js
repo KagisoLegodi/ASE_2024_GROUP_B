@@ -31,8 +31,7 @@ const SearchBar = () => {
   const debounceTimeout = useRef(null); // Timeout reference for short query debounce
   const longQueryTimeout = useRef(null); // Timeout reference for long query debounce
 
-
-   /**
+  /**
    * Syncs the search state with URL query parameters when the component mounts or query parameters change.
    */
   useEffect(() => {
@@ -44,9 +43,7 @@ const SearchBar = () => {
     }
   }, [searchParams]);
 
-
-
-   /**
+  /**
    * Fetches recipe suggestions based on the search query.
    * Updates the suggestions state and handles loading status.
    *
@@ -79,8 +76,7 @@ const SearchBar = () => {
     }
   };
 
-
-/**
+  /**
    * Handles changes in the search input field and debounces the query submission.
    *
    * @param {React.ChangeEvent<HTMLInputElement>} e - The input change event.
@@ -102,7 +98,7 @@ const SearchBar = () => {
     if (value.trim().length > 0 && value.trim().length <= 3) {
       debounceTimeout.current = setTimeout(() => {
         handleSearch(value);
-      }, 300);  // Debounce short queries with a delay of 300ms
+      }, 300); // Debounce short queries with a delay of 300ms
     }
 
     // Long query debounce (> 3 characters)
@@ -116,10 +112,9 @@ const SearchBar = () => {
     // Debounce for submitting any query when waiting
     clearTimeout(debounceTimeout.current); // Clear previous timeout
     debounceTimeout.current = setTimeout(() => {
-      handleSearch(value); 
-    }, 500);// Ensure the query is submitted after 500ms
+      handleSearch(value);
+    }, 500); // Ensure the query is submitted after 500ms
   };
-
 
   /**
    * Handles the search form submission, constructs a new search URL,
@@ -152,7 +147,6 @@ const SearchBar = () => {
     handleSearch(title);
   };
 
-
   return (
     <div className="relative flex justify-center mt-8">
       <input
@@ -160,7 +154,7 @@ const SearchBar = () => {
         placeholder="Search for recipes..."
         value={searchTextQuery}
         onChange={handleInputChange}
-         className="w-full px-4 py-2 text-lg text-[var(--button-bg)] placeholder-[var(--button-bg)]  bg-transparent border-b-2 border-[var(--header-bg)]  focus:outline-none focus:ring-0"
+        className="w-full px-4 py-2 text-lg text-[var(--button-bg)] placeholder-[var(--button-bg)]  bg-transparent border-b-2 border-[var(--header-bg)]  focus:outline-none focus:ring-0"
       />
 
       {/* Auto-suggestions Dropdown */}
@@ -185,7 +179,6 @@ const SearchBar = () => {
       )}
     </div>
   );
-  };
-  
-  export default SearchBar;
-  
+};
+
+export default SearchBar;
