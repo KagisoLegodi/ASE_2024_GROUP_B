@@ -1,23 +1,26 @@
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 
-export async function GET(req) {
+export async function GET() {
   const cookieStore = cookies();
 
   // Get the token from the cookie
-  const token = cookieStore.get("token"); // Adjust this key to match your cookie name.
+  const token = cookieStore.get("token"); // Matches the key set in login
 
   if (!token) {
+    console.error("No token found in cookies");
     return new Response(
-      JSON.stringify({ error: "No user ID found in cookies" }),
+      JSON.stringify({ error: "Unauthorized: No token found" }),
       { status: 401, headers: { "Content-Type": "application/json" } }
     );
   }
 
   try {
     // Verify the token and extract the payload
-    const secretKey = process.env.JWT_SECRET; // Ensure this is set in your environment variables
+    const secretKey = process.env.JWT_SECRET;
     const decoded = jwt.verify(token.value, secretKey);
+
+    console.log("Decoded token:", decoded);
 
     // Return the userId from the decoded token
     return new Response(
@@ -32,4 +35,3 @@ export async function GET(req) {
     );
   }
 }
-﻿

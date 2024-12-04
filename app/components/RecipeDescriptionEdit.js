@@ -18,9 +18,7 @@ export default function RecipeDescriptionEdit({
     console.log("Received recipeId:", recipeId);
   }, [recipeId]);
 
-  const handleEdit = () => {
-    setIsEditing(true);
-  };
+  const handleEdit = () => setIsEditing(true);
 
   const handleCancel = () => {
     setIsEditing(false);
@@ -29,66 +27,50 @@ export default function RecipeDescriptionEdit({
 
   const getUserId = async () => {
     try {
-      console.log("Attempting to fetch user ID...");
       const response = await fetch("/api/get-user-id");
-  
+
       if (!response.ok) {
-        console.error("Failed to fetch user ID. Status:", response.status);
         throw new Error("Failed to retrieve user ID");
       }
-  
+
       const { userId } = await response.json();
-      console.log("User ID successfully retrieved:", userId);
       return userId;
     } catch (error) {
-      console.error("Error in getUserId:", error);
+      console.error("Error fetching user ID:", error);
       return null;
     }
   };
-  
-  
-  async function handleSubmit(event) {
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-  
-    console.log("handleSubmit triggered...");
-    console.log("Fetching user ID...");
-  
+
+    setIsSubmitting(true);
+    console.log("Submitting updated description:", description);
+
     try {
-      const userId = await getUserId(); // Ensure this returns the correct userId
-      console.log("User ID successfully retrieved:", userId);
-  
-      const updatedDescription = "I have made this recipe a thousand times..."; // Example description
-      console.log("Submitting updated description:", updatedDescription);
-  
-      // Include all required fields in the request body
-      const response = await fetch(
-        `http://localhost:3000/api/recipes/${recipeId}/update`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            userId, // Ensure this field is passed if required
-            description: updatedDescription, // Field to update
-          }),
-        }
-      );
-  
+      const userId = await getUserId();
+      if (!userId) throw new Error("User ID is required");
+
+      const response = await fetch(`/api/recipes/${recipeId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ description, userId }),
+      });
+
       const data = await response.json();
-      if (!response.ok) {
-        console.error("Error response from update API:", data);
-        throw new Error("Failed to update description");
-      }
-  
+      if (!response.ok) throw new Error(data.error || "Failed to update recipe");
+
       console.log("Description updated successfully:", data);
+      onDescriptionUpdate && onDescriptionUpdate(description);
+      setIsEditing(false);
+      toast.success("Description updated successfully!");
     } catch (error) {
-      console.error("Error in handleSubmit:", error);
+      console.error("Error updating description:", error);
+      toast.error("Failed to update description.");
+    } finally {
+      setIsSubmitting(false);
     }
-  }
-  
-  
-  
+  };
 
   if (isEditing) {
     return (

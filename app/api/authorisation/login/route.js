@@ -1,4 +1,5 @@
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 import clientPromise from "../../../../lib/mongodb";
 
 export async function POST(req) {
@@ -31,12 +32,18 @@ export async function POST(req) {
       );
     }
 
+    // Generate a JWT token
+    const secretKey = process.env.JWT_SECRET;
+    const token = jwt.sign({ userId: user._id }, secretKey, {
+      expiresIn: "1h", // Token expiration time
+    });
+
     const cookieOptions = [
-     `userId=${user._id}`, // Store the user ID in a cookie
+      `token=${token}`,
       "Path=/",
       "HttpOnly",
       "Max-Age=3600", // 1 hour
-      process.env.NODE_ENV === "production" ? "Secure" : "", // Add Secure in production
+      process.env.NODE_ENV === "production" ? "Secure" : "",
     ].join("; ");
 
     return new Response(
