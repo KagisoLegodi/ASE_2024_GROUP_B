@@ -69,6 +69,12 @@ const RecipeReviews = ({ recipeId }) => {
     };
   }, [recipeId]);
 
+  /**
+   * Sorts reviews based on the selected sorting option.
+   *
+   * @returns {Array} Sorted reviews array.
+   */
+
   const sortedReviews = [...reviews].sort((a, b) => {
     if (sortOption === "newest") {
       return new Date(b.date) - new Date(a.date);
@@ -82,6 +88,12 @@ const RecipeReviews = ({ recipeId }) => {
     return 0;
   });
 
+  /**
+   * Displays a feedback message for a limited duration.
+   *
+   * @param {string} message - The feedback message to display.
+   */
+
   const showFeedbackMessage = (message) => {
     setFeedbackMessage(message);
     clearTimeout(feedbackTimer.current);
@@ -89,6 +101,12 @@ const RecipeReviews = ({ recipeId }) => {
       setFeedbackMessage(null);
     }, 3000);
   };
+
+  /**
+   * Handles the submission of a new or edited review.
+   *
+   * @param {Event} e - The form submission event.
+   */
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -143,6 +161,12 @@ const RecipeReviews = ({ recipeId }) => {
     }
   };
 
+   /**
+   * Deletes a review by its ID.
+   *
+   * @param {string} reviewId - The ID of the review to delete.
+   */
+
   const handleDelete = async (reviewId) => {
     setDeleting(true);
 
@@ -168,6 +192,12 @@ const RecipeReviews = ({ recipeId }) => {
       setConfirmDelete(null);
     }
   };
+
+   /**
+   * Prepares a review for editing.
+   *
+   * @param {Object} review - The review object to edit.
+   */
 
   const handleEdit = (review) => {
     setIsEditing(true);
