@@ -26,6 +26,9 @@ const RecipeReviews = ({ recipeId }) => {
   const [deleting, setDeleting] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(null);
 
+  // States for sorting reviews
+  const [sortOption, setSortOption] = useState("newest");
+
   // Feedback message
   const [feedbackMessage, setFeedbackMessage] = useState(null);
   const feedbackTimer = useRef(null);
@@ -66,11 +69,19 @@ const RecipeReviews = ({ recipeId }) => {
     };
   }, [recipeId]);
 
-  /**
-   * Show feedback message temporarily.
-   *
-   * @param {string} message - The feedback message to display.
-   */
+  const sortedReviews = [...reviews].sort((a, b) => {
+    if (sortOption === "newest") {
+      return new Date(b.date) - new Date(a.date);
+    } else if (sortOption === "oldest") {
+      return new Date(a.date) - new Date(b.date);
+    } else if (sortOption === "highest") {
+      return b.rating - a.rating;
+    } else if (sortOption === "lowest") {
+      return a.rating - b.rating;
+    }
+    return 0;
+  });
+
   const showFeedbackMessage = (message) => {
     setFeedbackMessage(message);
     clearTimeout(feedbackTimer.current);
@@ -79,11 +90,6 @@ const RecipeReviews = ({ recipeId }) => {
     }, 3000);
   };
 
-  /**
-   * Handle the submission or editing of a review.
-   *
-   * @param {React.FormEvent} e - The submit event.
-   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
@@ -105,7 +111,9 @@ const RecipeReviews = ({ recipeId }) => {
         throw new Error(data.error || "Failed to submit review.");
       }
 
-      const successMessage = isEditing ? "Review updated successfully!" : "Review submitted successfully!";
+      const successMessage = isEditing
+        ? "Review updated successfully!"
+        : "Review submitted successfully!";
       if (isEditing) {
         setReviews((prev) =>
           prev.map((r) =>
@@ -135,11 +143,6 @@ const RecipeReviews = ({ recipeId }) => {
     }
   };
 
-  /**
-   * Delete a review by ID.
-   *
-   * @param {string} reviewId - The ID of the review to delete.
-   */
   const handleDelete = async (reviewId) => {
     setDeleting(true);
 
@@ -166,39 +169,38 @@ const RecipeReviews = ({ recipeId }) => {
     }
   };
 
-  /**
-   * Initialize editing of an existing review.
-   *
-   * @param {Object} review - The review to be edited.
-   * * @param {string} review._id - The ID of the review to be edited.
-   * @param {string} review.username - The username of the reviewer.
-   * @param {string} review.review - The content of the review.
-   * @param {number} review.rating - The rating given in the review.
-   */
   const handleEdit = (review) => {
     setIsEditing(true);
     setEditReviewId(review._id);
     setUsername(review.username);
     setReviewText(review.review);
     setRating(review.rating);
-  
-    // Scroll slightly above the review input form
-    const offset = 130; // Adjust this value as needed for the slight upward scroll
+
+    const offset = 130;
     const formElement = formRef.current;
-    const formPosition = formElement.getBoundingClientRect().top + window.pageYOffset;
-  
+    const formPosition =
+      formElement.getBoundingClientRect().top + window.pageYOffset;
+
     window.scrollTo({
       top: formPosition - offset,
       behavior: "smooth",
     });
   };
-  
 
   if (loading) return <p>Loading reviews...</p>;
   if (error) return <p className="text-red-500">Error: {error}</p>;
 
   return (
     <section className="mt-8 relative">
+ {feedbackMessage && (
+  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+    <div className="bg-green-500 text-white text-center py-3 px-6 rounded-md shadow-lg backdrop-blur-md max-w-xs w-full">
+      <p>{feedbackMessage}</p>
+    </div>
+  </div>
+)}
+
+
       <h2 className="text-2xl font-semibold mb-4">Reviews</h2>
 
       <form ref={formRef} onSubmit={handleSubmit} className="mb-6">
@@ -239,75 +241,79 @@ const RecipeReviews = ({ recipeId }) => {
         <button
           type="submit"
           disabled={submitting}
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none"
+          className={`px-4 py-2 rounded-md shadow ${
+            submitting
+              ? "bg-gray-400 text-gray-700 cursor-not-allowed"
+              : "bg-blue-600 text-white hover:bg-blue-700"
+          }`}
         >
-          {submitting ? "Submitting..." : isEditing ? "Update Review" : "Submit Review"}
+          {submitting
+            ? "Submitting..."
+            : isEditing
+            ? "Update Review"
+            : "Submit Review"}
         </button>
       </form>
 
-      {feedbackMessage && (
-  <div
-    className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30 z-50"
-  >
-    <div className="bg-green-100 text-green-700 px-6 py-3 rounded-lg shadow-lg text-center">
-      {feedbackMessage}
-    </div>
-  </div>
-)}
+      <div className="mb-4">
+        <label className="block text-sm font-medium mb-1">Sort Reviews</label>
+        <select
+          value={sortOption}
+          onChange={(e) => setSortOption(e.target.value)}
+          className="w-full border rounded p-2"
+        >
+          <option value="newest">Newest First</option>
+          <option value="oldest">Oldest First</option>
+          <option value="highest">Highest Rating</option>
+          <option value="lowest">Lowest Rating</option>
+        </select>
+      </div>
 
-      {/* Render Reviews */}
-      {reviews.length > 0 ? (
-        <div className="space-y-4">
-          {reviews.map((review) => (
-            <div key={review._id} className="border rounded-lg p-4 bg-gray-50">
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-semibold">{review.username}</p>
-                <p className="font-medium text-teal-600">Rating: {review.rating} / 5</p>
-              </div>
-              <p className="text-gray-700 mt-2">{review.review}</p>
-              <div className="mt-2 flex gap-2">
-                <button
-                  onClick={() => handleEdit(review)}
-                  className="px-3 py-1 text-blue-600 border border-blue-600 rounded hover:bg-blue-600 hover:text-white"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => setConfirmDelete(review._id)}
-                  className="px-3 py-1 text-red-600 border border-red-600 rounded hover:bg-red-600 hover:text-white"
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <p>No reviews yet. Be the first to leave a review!</p>
-      )}
+      <div>
+        {sortedReviews.map((review) => (
+          <div key={review._id} className="border rounded p-4 mb-4">
+            <p className="font-semibold">{review.username}</p>
+            <p className="text-gray-700 mt-2">{review.review}</p>
+            <p className="text-sm text-gray-500">
+              {new Date(review.date).toLocaleDateString()} - Rating: {review.rating}/5
+            </p>
+            <div className="flex space-x-4 mt-2">
+            <button
+  onClick={() => handleEdit(review)}
+  className="px-3 py-1 rounded bg-blue-400 text-white hover:bg-blue-500"
+>
+  Edit
+</button>
 
-      {/* Delete Confirmation */}
-      {confirmDelete && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
-          <div className="bg-white rounded-lg p-6 max-w-sm w-full">
-            <p className="mb-4">Are you sure you want to delete this review?</p>
-            <div className="flex justify-between">
               <button
-                onClick={() => handleDelete(confirmDelete)}
-                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none"
+                onClick={() => setConfirmDelete(review._id)}
+                className="px-3 py-1 rounded bg-red-500 text-white hover:bg-red-600"
               >
-                Yes, Delete
-              </button>
-              <button
-                onClick={() => setConfirmDelete(null)}
-                className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400 focus:outline-none"
-              >
-                Cancel
+                Delete
               </button>
             </div>
+            {confirmDelete === review._id && (
+              <div className="mt-2 p-2 bg-red-100 rounded">
+                <p className="text-sm text-red-700">Confirm delete?</p>
+                <div className="flex space-x-2 mt-1">
+                  <button
+                    onClick={() => handleDelete(review._id)}
+                    className="px-3 py-1 rounded bg-red-500 text-white hover:bg-red-600"
+                  >
+                    Yes
+                  </button>
+                  <button
+                    onClick={() => setConfirmDelete(null)}
+                    className="px-3 py-1 rounded bg-gray-300 hover:bg-gray-400"
+                  >
+                    No
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
-        </div>
-      )}
+        ))}
+      </div>
     </section>
   );
 };
