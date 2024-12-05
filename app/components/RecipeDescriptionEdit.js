@@ -49,9 +49,10 @@ export default function RecipeDescriptionEdit({
 
     try {
       const userId = await getUserId();
+
       if (!userId) throw new Error("User ID is required");
 
-      const response = await fetch(`/api/recipes/${recipeId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/recipes/${recipeId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ description, userId }),

@@ -1,15 +1,14 @@
 import clientPromise from "../../../../lib/mongodb";
 
 export async function PUT(req, { params }) {
-  const { id } = params; // Extract recipe ID from the URL
-  const body = await req.json(); // Parse the incoming request body
+  const { id } = params;
+  const body = await req.json();
 
-  console.log("Incoming request:", { id, body }); // Debugging log
-
-  // Validate required fields
-  if (!id || !body.description || !body.userId) {
+  // Validate UUID format
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (!uuidRegex.test(id)) {
     return new Response(
-      JSON.stringify({ error: "Missing required fields" }),
+      JSON.stringify({ error: "Invalid recipe ID format" }),
       { status: 400, headers: { "Content-Type": "application/json" } }
     );
   }
@@ -18,10 +17,15 @@ export async function PUT(req, { params }) {
     const client = await clientPromise;
     const db = client.db("devdb");
 
-    // Perform the database update
+    // Find the recipe by its string _id
     const updatedRecipe = await db.collection("recipes").updateOne(
-      { _id: id }, // Match recipe by ID
-      { $set: { description: body.description, updatedBy: body.userId } } // Update description and user
+      { _id: id }, // Use the string `id` directly
+      {
+        $set: { description: body.description },
+        ...(await db.collection("recipes").findOne({ _id: id }))?.updatedBy
+          ? { $set: { updatedBy: body.userId } }
+          : { $setOnInsert: { updatedBy: body.userId } },
+      }
     );
 
     if (!updatedRecipe.matchedCount) {
