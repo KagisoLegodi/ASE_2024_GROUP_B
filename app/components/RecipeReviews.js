@@ -269,51 +269,49 @@ const RecipeReviews = ({ recipeId }) => {
         </select>
       </div>
 
-      <div>
-        {sortedReviews.map((review) => (
-          <div key={review._id} className="border rounded p-4 mb-4">
-            <p className="font-semibold">{review.username}</p>
-            <p className="text-gray-700 mt-2">{review.review}</p>
-            <p className="text-sm text-gray-500">
-              {new Date(review.date).toLocaleDateString()} - Rating: {review.rating}/5
-            </p>
-            <div className="flex space-x-4 mt-2">
-            <button
-  onClick={() => handleEdit(review)}
-  className="px-3 py-1 rounded bg-blue-400 text-white hover:bg-blue-500"
->
-  Edit
-</button>
-
-              <button
-                onClick={() => setConfirmDelete(review._id)}
-                className="px-3 py-1 rounded bg-red-500 text-white hover:bg-red-600"
-              >
-                Delete
-              </button>
-            </div>
-            {confirmDelete === review._id && (
-              <div className="mt-2 p-2 bg-red-100 rounded">
-                <p className="text-sm text-red-700">Confirm delete?</p>
-                <div className="flex space-x-2 mt-1">
-                  <button
-                    onClick={() => handleDelete(review._id)}
-                    className="px-3 py-1 rounded bg-red-500 text-white hover:bg-red-600"
-                  >
-                    Yes
-                  </button>
-                  <button
-                    onClick={() => setConfirmDelete(null)}
-                    className="px-3 py-1 rounded bg-gray-300 hover:bg-gray-400"
-                  >
-                    No
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        ))}
+     <div>
+  {sortedReviews.map((review) => (
+    <div key={review._id} className="border rounded-lg p-4 bg-[#FEF7E7] mb-4">
+      <p className="font-semibold text-lg">{review.username}</p>
+      <p className="text-gray-800 mt-2">{review.review}</p>
+      <p className="text-teal-600 font-medium mt-1">Rating: {review.rating} / 5</p>
+      <div className="flex space-x-4 mt-2">
+        <button
+          onClick={() => handleEdit(review)}
+          className="px-4 py-2 bg-blue-400 text-white rounded-lg hover:bg-blue-500 transition-colors"
+        >
+          Edit
+        </button>
+        <button
+          onClick={() => setConfirmDelete(review._id)}
+          className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+        >
+          Delete
+        </button>
       </div>
+      {confirmDelete === review._id && (
+        <div className="mt-3 p-3 bg-red-100 rounded-lg">
+          <p className="text-sm text-red-700">Are you sure you want to delete this review?</p>
+          <div className="flex space-x-2 mt-2">
+            <button
+              onClick={() => handleDelete(review._id)}
+              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+            >
+              Yes
+            </button>
+            <button
+              onClick={() => setConfirmDelete(null)}
+              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors"
+            >
+              No
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  ))}
+</div>
+
     </section>
   );
 };
