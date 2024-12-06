@@ -43,11 +43,11 @@ export default async function RecipePage({ searchParams }) {
 
   return (
     <main>
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex justify-between items-center mb-6">
         <div className="flex-1 flex justify-center">
           <SearchBar />
         </div>
-        <div className="flex-1 flex items-center mt-4">
+        <div className="flex-1 flex justify-center">
           <AdvancedFiltering
             selectedCategory={searchParams.category}
             selectedSteps={searchParams.steps}
@@ -101,7 +101,7 @@ export default async function RecipePage({ searchParams }) {
       )}
 
       {/* Recipe Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {recipes.map((recipe) => (
           <RecipeCard
             key={recipe._id}
