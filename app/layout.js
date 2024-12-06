@@ -18,9 +18,34 @@ import { metadata } from "../lib/metadata";
 export default function RootLayout({ children }) {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [themeLoaded, setThemeLoaded] = useState(false);
+  const [user, setUser] = useState(null); // State to store logged-in user details
 
   useEffect(() => {
     // Retrieve theme from localStorage or fallback to system preference
+    
+    const fetchSession = async () => {
+      try {
+        const response = await fetch("/api/authorisation/session", {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setUser(data.user); // Store user session details if valid
+        } else {
+          console.warn("No active session");
+          setUser(null); // Clear user state if session is invalid or missing
+        }
+      } catch (error) {
+        console.error("Error fetching session:", error);
+        setUser(null); // Ensure state consistency on error
+      }
+    };
+
+    fetchSession();
+
+    // Load and apply theme preference
     const savedTheme = localStorage.getItem("theme");
     const prefersDarkMode =
       savedTheme === "dark" ||
@@ -70,8 +95,16 @@ export default function RootLayout({ children }) {
       </Head>
       <body className={`flex flex-col min-h-screen`}>
         {/* Pass isDarkMode and toggleTheme to Header */}
-        <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
-        <main className="flex-grow pt-16">{children}</main>
+        <Header user={user} isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
+        <main className="flex-grow pt-16">
+        {/* Show user info if logged in */}
+        {user ? (
+            <p className="text-center text-sm text-green-500">Welcome, {user.email}</p>
+          ) : (
+            <p className="text-center text-sm text-red-500">You are not logged in</p>
+          )}
+          {children}
+        </main>
         <Footer />
       </body>
     </html>

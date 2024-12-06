@@ -69,6 +69,12 @@ const RecipeReviews = ({ recipeId }) => {
     };
   }, [recipeId]);
 
+  const calculateAverageRating = () => {
+    if (reviews.length === 0) return 0;
+    const sum = reviews.reduce((acc, review) => acc + review.rating, 0);
+    return (sum / reviews.length).toFixed(1); // Round to one decimal place
+  };
+
   /**
    * Sorts reviews based on the selected sorting option.
    *
@@ -142,7 +148,13 @@ const RecipeReviews = ({ recipeId }) => {
         );
       } else {
         setReviews((prev) => [
-          { _id: data.reviewId, username, date: new Date(), rating, review: reviewText },
+          {
+            _id: data.reviewId,
+            username,
+            date: new Date(),
+            rating,
+            review: reviewText,
+          },
           ...prev,
         ]);
       }
@@ -206,7 +218,10 @@ const RecipeReviews = ({ recipeId }) => {
     setReviewText(review.review);
     setRating(review.rating);
 
-    const offset = 130;
+
+
+    // Scroll slightly above the review input form
+    const offset = 130; // Adjust this value as needed for the slight upward scroll
     const formElement = formRef.current;
     const formPosition =
       formElement.getBoundingClientRect().top + window.pageYOffset;
@@ -232,6 +247,12 @@ const RecipeReviews = ({ recipeId }) => {
 
 
       <h2 className="text-2xl font-semibold mb-4">Reviews</h2>
+
+       {/* Display Average Rating */}
+       <div className="mb-4">
+        <p className="text-lg font-medium">Average Rating: {calculateAverageRating()} / 5</p>
+      </div>
+
 
       <form ref={formRef} onSubmit={handleSubmit} className="mb-6">
         <div className="mb-4">
@@ -263,7 +284,7 @@ const RecipeReviews = ({ recipeId }) => {
           >
             {[...Array(5)].map((_, i) => (
               <option key={i + 1} value={i + 1}>
-                {i + 1} Star{(i + 1) > 1 ? "s" : ""}
+                {i + 1} Star{i + 1 > 1 ? "s" : ""}
               </option>
             ))}
           </select>
@@ -297,7 +318,48 @@ const RecipeReviews = ({ recipeId }) => {
           <option value="highest">Highest Rating</option>
           <option value="lowest">Lowest Rating</option>
         </select>
-      </div>
+      </div> 
+
+      {feedbackMessage && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30 z-50">
+          <div className="bg-green-100 text-green-700 px-6 py-3 rounded-lg shadow-lg text-center">
+            {feedbackMessage}
+          </div>
+        </div>
+      )}
+
+      {/* Render Reviews */}
+      {reviews.length > 0 ? (
+        <div className="space-y-4">
+          {reviews.map((review) => (
+            <div key={review._id} className="border rounded-lg p-4 bg-gray-50">
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-semibold">{review.username}</p>
+                <span className="text-yellow-500">
+                  {"★".repeat(review.rating)}{"☆".repeat(5 - review.rating)}
+                </span>
+              </div>
+              <p className="text-gray-700 mt-2">{review.review}</p>
+              <div className="mt-2 flex gap-2">
+                <button
+                  onClick={() => handleEdit(review)}
+                  className="px-3 py-1 text-blue-600 border border-blue-600 rounded hover:bg-blue-600 hover:text-white"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => setConfirmDelete(review._id)}
+                  className="px-3 py-1 text-red-600 border border-red-600 rounded hover:bg-red-600 hover:text-white"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p>No reviews yet. Be the first to leave a review!</p>
+      )}
 
      <div>
   {sortedReviews.map((review) => (
