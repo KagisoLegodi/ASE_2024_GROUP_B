@@ -3,6 +3,7 @@ import { fetchRecipes } from "../../lib/api";
 import AdvancedFiltering from "../components/AdvancedFiltering";
 import RecipeCard from "../components/RecipeCard";
 import SearchBar from "../components/SearchBar";
+import { cookies } from 'next/headers';
 
 /**
  * Recipe Page that fetches and displays a list of recipes with pagination and filters.
@@ -13,6 +14,7 @@ import SearchBar from "../components/SearchBar";
  */
 export default async function RecipePage({ searchParams }) {
   const currentPage = parseInt(searchParams.page) || 1;
+  const token = cookies().get('token')?.value;
 
   // Construct search parameters object
   const searchParamsToInclude = {
@@ -105,11 +107,7 @@ export default async function RecipePage({ searchParams }) {
       {/* Recipe Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {recipes.map((recipe) => (
-          <RecipeCard
-            key={recipe._id}
-            recipe={recipe}
-            searchQuery={searchParamsToInclude.search}
-          />
+          <RecipeCard key={recipe._id} recipe={recipe} token={token}/>
         ))}
       </div>
 

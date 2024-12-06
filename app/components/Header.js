@@ -3,12 +3,55 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import ThemeToggle from "./ThemeToggle";
+import { Heart } from "lucide-react";
+
 
 const Header = ({isDarkMode, toggleTheme }) => {
   // State to track mobile menu visibility
-  const [isMenuOpen, setIsMenuOpen] = useState(false);  
-  // Toggle menu visibility
-  const toggleMenu = () => setIsMenuOpen((prev) => !prev);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // Function to toggle menu visibility
+  const toggleMenu = () => {
+    setIsMenuOpen((prev) => !prev);
+  };
+
+  const [favouriteCount, setFavouriteCount] = useState(0);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("jwt");
+    setIsLoggedIn(!!token);
+  
+    const fetchFavouriteCount = async () => {
+      if (!token) return;
+      try {
+        const response = await fetch("/api/favourites?action=count", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setFavouriteCount(data.count);
+        }
+      } catch (error) {
+        console.error("Error fetching favourite count:", error);
+      }
+    };
+  
+    fetchFavouriteCount();
+  
+    // Update favourites count on custom event
+    const updateCount = () => {
+      fetchFavouriteCount();
+    };
+    window.addEventListener("favouritesUpdated", updateCount);
+  
+    return () => {
+      window.removeEventListener("favouritesUpdated", updateCount);
+    };
+  }, []);
+
+  
+
   return (
     <header className="fixed top-0 left-0 w-full z-50 bg-[var(--header-bg)] bg-opacity-80 shadow-md backdrop-blur-lg">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
@@ -46,7 +89,7 @@ const Header = ({isDarkMode, toggleTheme }) => {
           </Link>
           <Link href="/favourites">
             <span className="hover:text-[var(--link-hover)] cursor-pointer">
-              Favourites
+              Favourites ({favouriteCount})
             </span>
           </Link>
           <Link href="/shoppingList">
