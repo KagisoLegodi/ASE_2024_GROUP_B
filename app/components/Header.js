@@ -5,17 +5,16 @@ import Image from "next/image";
 import ThemeToggle from "./ThemeToggle";
 
 /**
- * Header component for the application, including navigation, theme toggle, 
- * and login/logout functionality.
+ * Header component with navigation and logout functionality.
  *
- * @param {Object} props - Component properties.
- * @param {boolean} props.isDarkMode - Current theme mode (dark or light).
- * @param {Function} props.toggleTheme - Function to toggle between dark and light themes.
- * @param {Object|null} props.user - The logged-in user object, or null if not logged in.
- * @returns {JSX.Element} The rendered Header component.
+ * @component
+ * @param {Object} props - Props passed to the component.
+ * @param {boolean} props.isDarkMode - Current theme state (dark or light).
+ * @param {Function} props.toggleTheme - Function to toggle the theme.
+ * @param {Object} props.user - User session data (e.g., email).
+ * @returns {JSX.Element} - The rendered Header component.
  */
-const Header = ({ user, isDarkMode, toggleTheme }) => {
-  // State to track mobile menu visibility
+const Header = ({ isDarkMode, toggleTheme, user }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   /**
@@ -35,8 +34,7 @@ const Header = ({ user, isDarkMode, toggleTheme }) => {
       });
 
       if (response.ok) {
-        // Redirect to home page
-        window.location.href = "/";
+        window.location.href = "/"; // Redirect to home after logout
       } else {
         console.error("Logout failed");
       }
@@ -48,13 +46,12 @@ const Header = ({ user, isDarkMode, toggleTheme }) => {
   return (
     <header className="fixed top-0 left-0 w-full z-50 bg-[var(--header-bg)] bg-opacity-80 shadow-md backdrop-blur-lg">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-        {/* Logo Section */}
         <div className="flex items-center space-x-4">
           <Link href="/">
             <div className="h-10 cursor-pointer flex items-center">
               {isDarkMode ? (
                 <Image
-                  src="/ArejengLogoDark.png" // Dark theme logo file
+                  src="/ArejengLogoDark.png"
                   alt="Logo for Dark Theme"
                   width={120}
                   height={120}
@@ -62,7 +59,7 @@ const Header = ({ user, isDarkMode, toggleTheme }) => {
                 />
               ) : (
                 <Image
-                  src="/ArejengLogo.png" // Light theme logo file
+                  src="/ArejengLogo.png"
                   alt="Logo for Light Theme"
                   width={120}
                   height={120}
@@ -73,7 +70,6 @@ const Header = ({ user, isDarkMode, toggleTheme }) => {
           </Link>
         </div>
 
-        {/* Desktop Navigation Links */}
         <nav className="hidden md:flex items-center space-x-6">
           <Link href="/recipe">
             <span className="hover:text-[var(--link-hover)] cursor-pointer">
@@ -93,17 +89,15 @@ const Header = ({ user, isDarkMode, toggleTheme }) => {
           {user ? (
             <button
               onClick={handleLogout}
-              className="bg-red-500 px-3 py-1 rounded-full text-white font-bold"
+              className="bg-[var(--button-bg)] px-3 py-1 rounded-full"
             >
-              Logout
+              <span className="font-bold text-[var(--logout-text)]">Logout</span>
             </button>
           ) : (
             <>
               <Link href="/login">
                 <button className="bg-[var(--button-bg)] px-3 py-1 rounded-full">
-                  <span className="font-bold text-[var(--login-text)]">
-                    Login
-                  </span>
+                  <span className="font-bold text-[var(--login-text)]">Login</span>
                 </button>
               </Link>
               <Link href="/signup">
