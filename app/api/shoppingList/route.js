@@ -1,5 +1,4 @@
-import { NextResponse } from "next/server";
-import clientPromise from "../../../lib/mongodb";
+import { ObjectId } from "mongodb";
 
 /**
  * Save a new shopping list for a user.
@@ -213,39 +212,14 @@ export async function PUT(req) {
         purchased: item.purchased || false,
       }));
 
-      const result = await shoppingLists.updateOne(
-        { userId },
-        {
-          $set: {
-            items: updatedItems,
-            updatedAt: new Date(),
-          },
-        }
-      );
-
-      if (result.modifiedCount === 0) {
-        return NextResponse.json(
-          { message: "Failed to update shopping list. No changes were made." },
-          { status: 500 }
-        );
-      }
-
-      return NextResponse.json(
-        { message: "Shopping list updated successfully." },
-        { status: 200 }
-      );
-    }
-  } catch (error) {
-    console.error("Error updating shopping list:", error);
-    return NextResponse.json(
-      {
-        message: "Failed to update shopping list. Please try again later.",
-        error: error.message,
-      },
-      { status: 500 }
+  // Validate UUID format (adjust regex if needed for specific UUID version)
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (!uuidRegex.test(id)) {
+    return new Response(
+      JSON.stringify({ error: "Invalid recipe ID format" }),
+      { status: 400, headers: { "Content-Type": "application/json" } }
     );
   }
-}
 
 /**
  * Remove specific items from a shopping list.
@@ -254,58 +228,35 @@ export async function PUT(req) {
  */
 export async function DELETE(req) {
   try {
-    const dbClient = await clientPromise;
-    const db = dbClient.db("devdb");
-    const shoppingLists = db.collection("shopping_lists");
+    const client = await clientPromise;
+    const db = client.db("devdb");
 
-    const { userId, items } = await req.json();
-
-    if (!userId || !Array.isArray(items) || items.length === 0 || items.some((item) => !item.name)) {
-      return NextResponse.json(
-        { message: "Invalid input data. Each item must have a 'name'." },
-        { status: 400 }
-      );
-    }
-
-    const existingList = await shoppingLists.findOne({ userId });
-
-    if (!existingList) {
-      return NextResponse.json(
-        { message: "Shopping list not found for this user." },
-        { status: 404 }
-      );
-    }
-
-    const itemNamesToRemove = items.map((item) => item.name.trim().toLowerCase());
-
-    const result = await shoppingLists.updateOne(
-      { userId },
+    const updatedRecipe = await db.collection("recipes").updateOne(
+      { _id: id }, // Use `id` as a string
       {
-        $pull: {
-          items: { name: { $in: itemNamesToRemove } },
-        },
+        $set: { description: body.description },
+        ...(await db.collection("recipes").findOne({ _id: id }))?.updatedBy
+          ? { $set: { updatedBy: body.userId } }
+          : { $setOnInsert: { updatedBy: body.userId } },
       }
     );
 
-    if (result.modifiedCount === 0) {
-      return NextResponse.json(
-        { message: "No matching items were found to remove." },
-        { status: 404 }
+    if (!updatedRecipe.matchedCount) {
+      return new Response(
+        JSON.stringify({ error: "Recipe not found" }),
+        { status: 404, headers: { "Content-Type": "application/json" } }
       );
     }
 
-    return NextResponse.json(
-      { message: "Specified items removed from shopping list successfully." },
-      { status: 200 }
+    return new Response(
+      JSON.stringify({ message: "Recipe updated successfully" }),
+      { status: 200, headers: { "Content-Type": "application/json" } }
     );
   } catch (error) {
-    console.error("Error removing items from shopping list:", error);
-    return NextResponse.json(
-      {
-        message: "Failed to remove items from shopping list. Please try again later.",
-        error: error.message,
-      },
-      { status: 500 }
+    console.error("Error updating recipe:", error);
+    return new Response(
+      JSON.stringify({ error: "Server error" }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }
 }

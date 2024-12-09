@@ -3,6 +3,7 @@ import { fetchRecipes } from "../../lib/api";
 import AdvancedFiltering from "../components/AdvancedFiltering";
 import RecipeCard from "../components/RecipeCard";
 import SearchBar from "../components/SearchBar";
+import { cookies } from 'next/headers';
 
 /**
  * Recipe Page that fetches and displays a list of recipes with pagination and filters.
@@ -13,6 +14,7 @@ import SearchBar from "../components/SearchBar";
  */
 export default async function RecipePage({ searchParams }) {
   const currentPage = parseInt(searchParams.page) || 1;
+  const token = cookies().get('token')?.value;
 
   // Construct search parameters object
   const searchParamsToInclude = {
@@ -43,11 +45,11 @@ export default async function RecipePage({ searchParams }) {
 
   return (
     <main>
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex justify-between items-center mb-6">
         <div className="flex-1 flex justify-center">
           <SearchBar />
         </div>
-        <div className="ml-4 flex items-center mt-6">
+        <div className="flex-1 flex justify-center">
           <AdvancedFiltering
             selectedCategory={searchParams.category}
             selectedSteps={searchParams.steps}
@@ -57,14 +59,12 @@ export default async function RecipePage({ searchParams }) {
         </div>
       </div>
 
-      <h1 className="text-2xl font-bold text-center mb-8">Recipes</h1>
-
       {/* Display filters applied */}
       <div className="text-center mb-4">
         {searchParams.search && (
           <span className="text-md font-semibold">
             Search:{" "}
-            <span className="px-2 py-1 bg-gray-200 rounded-full text-gray-700">
+            <span className="px-2 py-1  rounded-full">
               {searchParams.search}
             </span>
           </span>
@@ -103,13 +103,9 @@ export default async function RecipePage({ searchParams }) {
       )}
 
       {/* Recipe Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {recipes.map((recipe) => (
-          <RecipeCard
-            key={recipe._id}
-            recipe={recipe}
-            searchQuery={searchParamsToInclude.search}
-          />
+          <RecipeCard key={recipe._id} recipe={recipe} token={token}/>
         ))}
       </div>
 

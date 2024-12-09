@@ -1,5 +1,7 @@
+"use client"
 import Head from "next/head";
 import Link from "next/link";
+import FavouriteButton from "./FavouriteButton";
 import Carousel from "./Carousel";
 import { highlightText } from "../../lib/utils";
 
@@ -17,7 +19,7 @@ import { highlightText } from "../../lib/utils";
  * @param {Array<string>} props.recipe.images - Array of image URLs for the recipe
  */
 
-export default function RecipeCard({ recipe, searchQuery }) {
+export default function RecipeCard({ recipe, token }) {
   /**
    * Formats a date string to a readable format.
    *
@@ -50,17 +52,32 @@ export default function RecipeCard({ recipe, searchQuery }) {
       <meta name="twitter:description" content={`Detailed recipe for ${recipe.title}.`} />
       <meta name="twitter:image" content={recipe.images[0]} /> */}
       </Head>
+
+    {/* Image Carousel */}
+    <div className="relative">
       <Carousel
         images={recipe.images}
         alt={recipe.title}
         className="w-full h-48 object-cover rounded-md"
+        
       />
+      <div className="absolute top-2 right-2">
+          <FavouriteButton
+            recipeId={recipe._id}
+            onFavouriteChange={() => {
+              // Dispatch event to update header count
+              window.dispatchEvent(new Event("favouritesUpdated"));
+            }}
+            token={token}
+          />
+        </div>
+    </div>
       <p className="text-[var(--text-muted)] text-xs mt-1">
         Published : {formatDate(recipe.published)}
       </p>
       <div className="p-4">
         <h3 className="text-[var(--text-heading)] font-bold text-xl">
-        {highlightText(recipe.title, searchQuery)}
+        {highlightText(recipe.title, token)}
         </h3>
 
         <div className="flex items-center justify-between mt-3 p-4">

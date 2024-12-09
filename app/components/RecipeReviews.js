@@ -237,6 +237,7 @@ const RecipeReviews = ({ recipeId }) => {
 
   return (
     <section className="mt-8 relative">
+
  {feedbackMessage && (
   <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
     <div className="bg-green-500 text-white text-center py-3 px-6 rounded-md shadow-lg backdrop-blur-md max-w-xs w-full">
@@ -247,7 +248,6 @@ const RecipeReviews = ({ recipeId }) => {
 
 
       <h2 className="text-2xl font-semibold mb-4">Reviews</h2>
-
        {/* Display Average Rating */}
        <div className="mb-4">
         <p className="text-lg font-medium">Average Rating: {calculateAverageRating()} / 5</p>
@@ -265,7 +265,7 @@ const RecipeReviews = ({ recipeId }) => {
             required
           />
         </div>
-        <div className="mb-4">
+        <div className="mb-4 ">
           <label className="block text-sm font-medium mb-1">Your Review</label>
           <textarea
             value={reviewText}
