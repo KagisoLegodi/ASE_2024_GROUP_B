@@ -26,6 +26,7 @@
     "framer-motion": "^11.11.9",
     "he": "^1.2.0",
     "jose": "^5.9.6",
+    "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.2",
     "keyv": "^5.1.2",
     "lucide-react": "^0.453.0",
@@ -33,8 +34,9 @@
     "next": "^14.2.16",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "sonner": "^1.7.0",
     "tailwind": "^4.0.0",
-    "tailwind-merge": "^2.5.4"
+    "tailwind-merge": "^2.5.5"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^1.9.0",
