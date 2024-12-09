@@ -38,14 +38,34 @@ export async function POST(req) {
       expiresIn: "1h", // Token expiration time
     });
 
-    const cookieOptions = [
-      `token=${token}`,
-      "Path=/",
-      "HttpOnly",
-      "Max-Age=3600", // 1 hour
-      process.env.NODE_ENV === "production" ? "Secure" : "",
-    ].join("; ");
+    const token = jwt.sign(
+      { userId: user._id, email: user.email }, // Payload
+      JWT_SECRET, // Secret key
+      { expiresIn: "1h" } // Token expiration
+    );
 
+    // Define cookie options
+    const cookieOptions = {
+    httpOnly: true,  // Prevents JavaScript from accessing the cookie
+    secure: process.env.NODE_ENV === "production", // Only use cookies over HTTPS
+      maxAge: 60 * 60 * 1000, // 1 hour
+      sameSite: "Strict", // Helps prevent CSRF attacks
+      path: "/", // Cookie is accessible throughout the entire app
+    };
+
+    // Set additional cookies for user state
+    const userCookies = [
+      `user_email=${encodeURIComponent(user.email)}; Path=/; Max-Age=3600; Secure=${process.env.NODE_ENV === "production"}; SameSite=Strict`,
+      `logged_in=yes; Path=/; Max-Age=3600; Secure=${process.env.NODE_ENV === "production"}; SameSite=Strict`,
+      `user_session=${token}; Path=/; Max-Age=3600; Secure=${process.env.NODE_ENV === "production"}; SameSite=Strict; HttpOnly`,
+    ];
+
+    // Set all cookies in headers
+    const setCookieHeader = [`token=${token}; ${Object.entries(cookieOptions)
+      .map(([key, value]) => `${key}=${value}`)
+      .join("; ")}`, ...userCookies];
+
+    // Respond with user details and cookies
     return new Response(
       JSON.stringify({
         message: "Login successful",
