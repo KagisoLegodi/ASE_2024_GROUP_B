@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import clientPromise from "lib/mongodb"; // adjust the path if needed
+import clientPromise from "../../lib/mongodb.js";
 
 /**
  * Save a new shopping list for a user.
