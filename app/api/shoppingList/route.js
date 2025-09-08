@@ -1,9 +1,8 @@
-import { ObjectId } from "mongodb";
+import { NextResponse } from "next/server";
+import clientPromise from "@/lib/mongodb"; // adjust the path if needed
 
 /**
  * Save a new shopping list for a user.
- * @param {Request} req - The HTTP request object.
- * @returns {Promise<NextResponse>} - The response object containing a success message or error details.
  */
 export async function POST(req) {
   try {
@@ -20,9 +19,7 @@ export async function POST(req) {
       items.some((item) => !item.name)
     ) {
       return NextResponse.json(
-        {
-          message: "Invalid input data. Each item must have a 'name'.",
-        },
+        { message: "Invalid input data. Each item must have a 'name'." },
         { status: 400 }
       );
     }
@@ -55,10 +52,7 @@ export async function POST(req) {
   } catch (error) {
     console.error("Error saving shopping list:", error);
     return NextResponse.json(
-      {
-        message: "Failed to save shopping list. Please try again later.",
-        error: error.message,
-      },
+      { message: "Failed to save shopping list", error: error.message },
       { status: 500 }
     );
   }
@@ -66,8 +60,6 @@ export async function POST(req) {
 
 /**
  * Retrieve a shopping list for a user.
- * @param {Request} req - The HTTP request object.
- * @returns {Promise<NextResponse>} - The response object containing the shopping list or error details.
  */
 export async function GET(req) {
   try {
@@ -101,19 +93,14 @@ export async function GET(req) {
   } catch (error) {
     console.error("Error fetching shopping list:", error);
     return NextResponse.json(
-      {
-        message: "Failed to fetch shopping list. Please try again later.",
-        error: error.message,
-      },
+      { message: "Failed to fetch shopping list", error: error.message },
       { status: 500 }
     );
   }
 }
 
 /**
- * Update or add items to a shopping list, including marking items as purchased.
- * @param {Request} req - The HTTP request object.
- * @returns {Promise<NextResponse>} - The response object indicating the operation's success or failure.
+ * Update or add items to a shopping list.
  */
 export async function PUT(req) {
   try {
@@ -139,16 +126,10 @@ export async function PUT(req) {
     }
 
     if (markPurchased) {
-      // Mark items as purchased
-      const updates = items.map((item) => ({
-        name: item.name.trim().toLowerCase(),
-        purchased: item.purchased,
-      }));
-
-      const bulkOps = updates.map((update) => ({
+      const bulkOps = items.map((item) => ({
         updateOne: {
-          filter: { userId, "items.name": update.name },
-          update: { $set: { "items.$.purchased": update.purchased } },
+          filter: { userId, "items.name": item.name.trim().toLowerCase() },
+          update: { $set: { "items.$.purchased": item.purchased } },
         },
       }));
 
@@ -166,7 +147,6 @@ export async function PUT(req) {
         { status: 200 }
       );
     } else if (append) {
-      // Append new items
       const newItems = items.map((item) => ({
         name: item.name.trim().toLowerCase(),
         quantity: item.quantity || 1,
@@ -183,80 +163,85 @@ export async function PUT(req) {
         ),
       ];
 
-      const result = await shoppingLists.updateOne(
+      await shoppingLists.updateOne(
         { userId },
-        {
-          $set: {
-            items: updatedItems,
-            updatedAt: new Date(),
-          },
-        }
+        { $set: { items: updatedItems, updatedAt: new Date() } }
       );
-
-      if (result.modifiedCount === 0) {
-        return NextResponse.json(
-          { message: "Failed to add new items to shopping list." },
-          { status: 500 }
-        );
-      }
 
       return NextResponse.json(
         { message: "New items added to shopping list successfully." },
         { status: 200 }
       );
     } else {
-      // Replace items in the shopping list
       const updatedItems = items.map((item) => ({
         name: item.name.trim().toLowerCase(),
         quantity: item.quantity || 1,
         purchased: item.purchased || false,
       }));
 
-  // Validate UUID format (adjust regex if needed for specific UUID version)
-  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-  if (!uuidRegex.test(id)) {
-    return new Response(
-      JSON.stringify({ error: "Invalid recipe ID format" }),
-      { status: 400, headers: { "Content-Type": "application/json" } }
+      await shoppingLists.updateOne(
+        { userId },
+        { $set: { items: updatedItems, updatedAt: new Date() } }
+      );
+
+      return NextResponse.json(
+        { message: "Shopping list updated successfully." },
+        { status: 200 }
+      );
+    }
+  } catch (error) {
+    console.error("Error updating shopping list:", error);
+    return NextResponse.json(
+      { message: "Failed to update shopping list", error: error.message },
+      { status: 500 }
     );
   }
+}
 
 /**
  * Remove specific items from a shopping list.
- * @param {Request} req - The HTTP request object.
- * @returns {Promise<NextResponse>} - The response object indicating the operation's success or failure.
  */
 export async function DELETE(req) {
   try {
-    const client = await clientPromise;
-    const db = client.db("devdb");
+    const dbClient = await clientPromise;
+    const db = dbClient.db("devdb");
+    const shoppingLists = db.collection("shopping_lists");
 
-    const updatedRecipe = await db.collection("recipes").updateOne(
-      { _id: id }, // Use `id` as a string
-      {
-        $set: { description: body.description },
-        ...(await db.collection("recipes").findOne({ _id: id }))?.updatedBy
-          ? { $set: { updatedBy: body.userId } }
-          : { $setOnInsert: { updatedBy: body.userId } },
-      }
-    );
+    const { userId, items } = await req.json();
 
-    if (!updatedRecipe.matchedCount) {
-      return new Response(
-        JSON.stringify({ error: "Recipe not found" }),
-        { status: 404, headers: { "Content-Type": "application/json" } }
+    if (!userId || !Array.isArray(items) || items.length === 0) {
+      return NextResponse.json(
+        { message: "Invalid input data. 'userId' and 'items' are required." },
+        { status: 400 }
       );
     }
 
-    return new Response(
-      JSON.stringify({ message: "Recipe updated successfully" }),
-      { status: 200, headers: { "Content-Type": "application/json" } }
+    const result = await shoppingLists.updateOne(
+      { userId },
+      {
+        $pull: {
+          items: { name: { $in: items.map((i) => i.name.trim().toLowerCase()) } },
+        },
+        $set: { updatedAt: new Date() },
+      }
+    );
+
+    if (result.modifiedCount === 0) {
+      return NextResponse.json(
+        { message: "No items were removed. Please check the item names." },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(
+      { message: "Items removed from shopping list successfully." },
+      { status: 200 }
     );
   } catch (error) {
-    console.error("Error updating recipe:", error);
-    return new Response(
-      JSON.stringify({ error: "Server error" }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
+    console.error("Error deleting shopping list items:", error);
+    return NextResponse.json(
+      { message: "Failed to delete items", error: error.message },
+      { status: 500 }
     );
   }
 }
