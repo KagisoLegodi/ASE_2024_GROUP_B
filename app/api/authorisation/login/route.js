@@ -32,40 +32,31 @@ export async function POST(req) {
       );
     }
 
-    // Generate a JWT token
+    // ✅ Generate a single JWT token
     const secretKey = process.env.JWT_SECRET;
-    const token = jwt.sign({ userId: user._id }, secretKey, {
-      expiresIn: "1h", // Token expiration time
-    });
-
     const token = jwt.sign(
-      { userId: user._id, email: user.email }, // Payload
-      JWT_SECRET, // Secret key
-      { expiresIn: "1h" } // Token expiration
+      { userId: user._id, email: user.email },
+      secretKey,
+      { expiresIn: "1h" }
     );
 
-    // Define cookie options
-    const cookieOptions = {
-    httpOnly: true,  // Prevents JavaScript from accessing the cookie
-    secure: process.env.NODE_ENV === "production", // Only use cookies over HTTPS
-      maxAge: 60 * 60 * 1000, // 1 hour
-      sameSite: "Strict", // Helps prevent CSRF attacks
-      path: "/", // Cookie is accessible throughout the entire app
-    };
+    // ✅ Define cookie options
+    const cookieOptions = [
+      `HttpOnly`, // prevent access from JS
+      `Secure=${process.env.NODE_ENV === "production"}`, // HTTPS only in prod
+      `Max-Age=3600`, // 1 hour
+      `SameSite=Strict`,
+      `Path=/`
+    ].join("; ");
 
-    // Set additional cookies for user state
-    const userCookies = [
-      `user_email=${encodeURIComponent(user.email)}; Path=/; Max-Age=3600; Secure=${process.env.NODE_ENV === "production"}; SameSite=Strict`,
-      `logged_in=yes; Path=/; Max-Age=3600; Secure=${process.env.NODE_ENV === "production"}; SameSite=Strict`,
-      `user_session=${token}; Path=/; Max-Age=3600; Secure=${process.env.NODE_ENV === "production"}; SameSite=Strict; HttpOnly`,
+    // ✅ Set cookies properly
+    const setCookieHeader = [
+      `token=${token}; ${cookieOptions}`,
+      `user_email=${encodeURIComponent(user.email)}; Path=/; Max-Age=3600; SameSite=Strict`,
+      `logged_in=yes; Path=/; Max-Age=3600; SameSite=Strict`
     ];
 
-    // Set all cookies in headers
-    const setCookieHeader = [`token=${token}; ${Object.entries(cookieOptions)
-      .map(([key, value]) => `${key}=${value}`)
-      .join("; ")}`, ...userCookies];
-
-    // Respond with user details and cookies
+    // ✅ Respond with cookies and user info
     return new Response(
       JSON.stringify({
         message: "Login successful",
@@ -75,7 +66,7 @@ export async function POST(req) {
         status: 200,
         headers: {
           "Content-Type": "application/json",
-          "Set-Cookie": cookieOptions,
+          "Set-Cookie": setCookieHeader,
         },
       }
     );
